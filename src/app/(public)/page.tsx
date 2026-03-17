@@ -1,0 +1,23 @@
+import { HeroSection } from "@/components/home/hero-section";
+import { ImpactStats } from "@/components/home/impact-stats";
+import { MissionSection } from "@/components/home/mission-section";
+import { CausesPreview } from "@/components/home/causes-preview";
+import { VolunteerTeam } from "@/components/home/volunteer-team";
+import { StatsBar } from "@/components/home/stats-bar";
+import { Testimonials } from "@/components/home/testimonials";
+import { FaqSection } from "@/components/home/faq-section";
+
+export default function Home() {
+  return (
+    <>
+      <HeroSection />
+      <ImpactStats />
+      <MissionSection />
+      <CausesPreview />
+      <VolunteerTeam />
+      <StatsBar />
+      <Testimonials />
+      <FaqSection />
+    </>
+  );
+}

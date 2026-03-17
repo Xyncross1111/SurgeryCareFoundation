@@ -19,6 +19,7 @@
 # misc
 .DS_Store
 *.pem
+Thumbs.db
 
 # debug
 npm-debug.log*
@@ -26,6 +27,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
+.env
 .env*.local
 
 # vercel
@@ -34,3 +36,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# claude code
+.claude/
+.mcp.json
+
+# editor
+.vscode/
+.idea/
+
+# figma analysis (temp files)
+FIGMA_ANALYSIS.md
+figma-summary.md

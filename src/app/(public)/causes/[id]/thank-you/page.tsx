@@ -1,0 +1,60 @@
+import Link from "next/link";
+import { Container } from "@/components/ui/container";
+import { Heading } from "@/components/ui/heading";
+import { Text } from "@/components/ui/text";
+import { buttonVariants } from "@/components/ui/button";
+import { CheckCircleIcon, GridIcon, ShareIcon } from "@/components/ui/icons";
+
+export default function ThankYouPage() {
+  return (
+    <section className="bg-surface-page py-20 md:py-32">
+      <Container className="flex justify-center">
+        <div className="relative w-full max-w-lg text-center">
+          {/* Check icon */}
+          <div className="mx-auto -mb-7 flex size-14 items-center justify-center rounded-full bg-accent shadow-lg">
+            <CheckCircleIcon className="size-7 text-white" />
+          </div>
+
+          <div className="rounded-2xl border border-surface-border bg-white px-8 pb-8 pt-14 shadow-card">
+            <Heading level="h2" as="h1" className="mb-4">
+              Thank You!
+            </Heading>
+
+            <Text variant="secondary" className="mb-6">
+              Your generous donation of{" "}
+              <span className="font-bold text-accent">&#8377;5,000</span> has been
+              successfully processed. You have just made a massive difference in
+              someone&apos;s life.
+            </Text>
+
+            {/* Receipt notice */}
+            <div className="mb-8 rounded-xl bg-surface-page px-6 py-4">
+              <p className="flex items-center justify-center gap-2 text-btn font-bold text-primary">
+                <span className="text-red-500" aria-hidden="true">&#10084;</span>
+                An email receipt has been sent to you.
+              </p>
+            </div>
+
+            {/* Actions */}
+            <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+              <Link
+                href="/dashboard"
+                className={buttonVariants({ variant: "secondary", className: "gap-2" })}
+              >
+                <GridIcon className="size-4" />
+                Dashboard
+              </Link>
+              <button
+                type="button"
+                className={buttonVariants({ variant: "outline", className: "gap-2" })}
+              >
+                <ShareIcon className="size-4" />
+                Share Impact
+              </button>
+            </div>
+          </div>
+        </div>
+      </Container>
+    </section>
+  );
+}
