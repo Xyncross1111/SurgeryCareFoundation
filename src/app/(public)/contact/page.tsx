@@ -18,21 +18,26 @@ export default function ContactPage() {
 
       <section className="py-16 md:py-24">
         <Container>
-          <div className="grid gap-8 lg:grid-cols-5 lg:gap-12">
+          <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:gap-12">
             {/* Contact Form */}
-            <div className="rounded-2xl bg-white p-8 shadow-card lg:col-span-3">
-              <Heading level="h3" as="h2" className="mb-8 text-accent">
+            <div className="rounded-[40px] border border-surface-subtle bg-white p-8 shadow-[0px_20px_60px_0px_rgba(1,74,98,0.08)] md:p-[50px]">
+              <Heading level="h3" as="h2" className="mb-8 text-[30px] leading-[36px]">
                 Send us a message
               </Heading>
 
-              <form className="space-y-6">
+              <form className="space-y-8">
                 <div className="grid gap-6 sm:grid-cols-2">
                   <Input label="First Name" placeholder="John" />
                   <Input label="Last Name" placeholder="Doe" />
                 </div>
                 <Input label="Email Address" type="email" placeholder="john@example.com" />
                 <Textarea label="Message" placeholder="How can we help you?" />
-                <Button variant="secondary" size="lg" type="submit" className="gap-2">
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  type="submit"
+                  className="gap-2 rounded-[14px] text-[16px] font-black"
+                >
                   Send Message
                   <SendIcon className="size-4" />
                 </Button>
@@ -40,42 +45,58 @@ export default function ContactPage() {
             </div>
 
             {/* Contact Info */}
-            <div className="space-y-6 lg:col-span-2">
+            <div className="space-y-8 lg:w-[400px]">
               {/* Email */}
-              <div className="flex items-start gap-4 rounded-2xl bg-white p-6 shadow-card">
-                <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-surface-green">
-                  <MailIcon className="size-5 text-accent" />
+              <div className="flex items-start gap-6 rounded-[32px] border border-surface-subtle bg-white p-8 shadow-[0px_10px_40px_0px_rgba(0,0,0,0.04)]">
+                <span className="flex size-16 shrink-0 items-center justify-center rounded-full bg-surface-green">
+                  <MailIcon className="size-7 text-accent" />
                 </span>
                 <div>
-                  <Heading level="h4" as="h3" className="mb-1">Email Us</Heading>
-                  <Text variant="secondary" className="mb-1">We&apos;ll respond within 24 hours.</Text>
-                  <a href="mailto:Surgerycare4812@gmail.com" className="text-btn font-bold text-accent transition-colors hover:text-accent-green">
+                  <Heading level="h4" as="h3" className="mb-1 text-[20px]">
+                    Email Us
+                  </Heading>
+                  <Text variant="secondary" className="mb-2 text-[16px]">
+                    We&apos;ll respond within 24 hours.
+                  </Text>
+                  <a
+                    href="mailto:Surgerycare4812@gmail.com"
+                    className="text-[18px] font-bold text-accent transition-colors hover:text-accent-green"
+                  >
                     Surgerycare4812@gmail.com
                   </a>
                 </div>
               </div>
 
               {/* Phone */}
-              <div className="flex items-start gap-4 rounded-2xl bg-white p-6 shadow-card">
-                <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-surface-green">
-                  <PhoneIcon className="size-5 text-accent" />
+              <div className="flex items-start gap-6 rounded-[32px] border border-surface-subtle bg-white p-8 shadow-[0px_10px_40px_0px_rgba(0,0,0,0.04)]">
+                <span className="flex size-16 shrink-0 items-center justify-center rounded-full bg-surface-green">
+                  <PhoneIcon className="size-7 text-accent" />
                 </span>
                 <div>
-                  <Heading level="h4" as="h3" className="mb-1">Call Us</Heading>
-                  <Text variant="secondary" className="mb-1">Mon-Fri from 9am to 6pm.</Text>
-                  <a href="tel:+919960513453" className="text-btn font-bold text-accent transition-colors hover:text-accent-green">
+                  <Heading level="h4" as="h3" className="mb-1 text-[20px]">
+                    Call Us
+                  </Heading>
+                  <Text variant="secondary" className="mb-2 text-[16px]">
+                    Mon-Fri from 9am to 6pm.
+                  </Text>
+                  <a
+                    href="tel:+919960513453"
+                    className="text-[18px] font-bold text-accent transition-colors hover:text-accent-green"
+                  >
                     +91 99605 13453
                   </a>
                 </div>
               </div>
 
               {/* HQ */}
-              <div className="rounded-2xl bg-primary p-6 text-white">
-                <span className="mb-4 flex size-12 items-center justify-center rounded-full bg-accent">
-                  <MapPinIcon className="size-5 text-white" />
+              <div className="rounded-[32px] bg-primary p-8 shadow-[0px_20px_25px_0px_rgba(0,0,0,0.1),0px_8px_10px_0px_rgba(0,0,0,0.1)]">
+                <span className="mb-6 flex size-16 items-center justify-center rounded-full bg-white/10">
+                  <MapPinIcon className="size-7 text-white" />
                 </span>
-                <Heading level="h4" as="h3" className="mb-3 text-white">Headquarters</Heading>
-                <Text variant="on-dark">
+                <Heading level="h4" as="h3" className="mb-4 text-[24px] leading-[32px] text-white">
+                  Headquarters
+                </Heading>
+                <Text className="text-[16px] leading-[26px] text-[rgba(236,253,245,0.8)]">
                   123 Healthcare Avenue,<br />
                   Medical District, Mumbai<br />
                   Maharashtra, India 400001

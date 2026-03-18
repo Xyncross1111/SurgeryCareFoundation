@@ -8,33 +8,40 @@ import { Heading } from "@/components/ui/heading";
 import { Text } from "@/components/ui/text";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { MailIcon, LockIcon, ArrowRightIcon } from "@/components/ui/icons";
-import { useAuth } from "@/context/auth-context";
+import { LockIcon, ArrowRightIcon } from "@/components/ui/icons";
+import { authService } from "@/services/auth.service";
 import { ApiError } from "@/lib/api-error";
 
-function LoginForm() {
-  const { login } = useAuth();
+function ResetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const token = searchParams.get("token") ?? "";
 
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const resetSuccess = searchParams.get("reset") === "success";
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
-    setIsSubmitting(true);
 
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    if (!token) {
+      setError("Invalid or missing reset token.");
+      return;
+    }
+
+    setIsSubmitting(true);
     try {
-      await login({ email, password });
-      const redirect = searchParams.get("redirect") || "/dashboard";
-      router.push(redirect);
+      await authService.resetPassword({ token, password });
+      router.push("/login?reset=success");
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Login failed. Please try again.");
+      setError(err instanceof ApiError ? err.message : "Failed to reset password. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -43,17 +50,11 @@ function LoginForm() {
   return (
     <div className="w-full max-w-md">
       <Heading level="h2" as="h1" className="mb-3">
-        Welcome Back
+        Reset Password
       </Heading>
       <Text variant="secondary" size="body-lg" className="mb-10">
-        Log in to continue your impact.
+        Enter your new password below.
       </Text>
-
-      {resetSuccess && (
-        <div className="mb-6 rounded-xl border border-accent/20 bg-accent/5 px-4 py-3 text-body text-accent">
-          Password reset successfully. Please log in with your new password.
-        </div>
-      )}
 
       {error && (
         <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-body text-red-600">
@@ -63,36 +64,26 @@ function LoginForm() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <Input
-          label="Email Address"
-          type="email"
-          placeholder="you@example.com"
-          icon={<MailIcon className="size-5" />}
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          label="New Password"
+          type="password"
+          placeholder="••••••••"
+          icon={<LockIcon className="size-5" />}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           required
+          minLength={8}
         />
 
-        <div>
-          <div className="mb-2 flex items-center justify-between">
-            <label className="text-label uppercase text-slate-medium">
-              Password
-            </label>
-            <Link
-              href="/forgot-password"
-              className="text-label font-bold text-accent transition-colors hover:text-accent-green"
-            >
-              Forgot Password?
-            </Link>
-          </div>
-          <Input
-            type="password"
-            placeholder="••••••••"
-            icon={<LockIcon className="size-5" />}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
+        <Input
+          label="Confirm New Password"
+          type="password"
+          placeholder="••••••••"
+          icon={<LockIcon className="size-5" />}
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          required
+          minLength={8}
+        />
 
         <Button
           variant="secondary"
@@ -101,25 +92,25 @@ function LoginForm() {
           className="w-full gap-2"
           disabled={isSubmitting}
         >
-          {isSubmitting ? "Signing In..." : "Sign In"}
+          {isSubmitting ? "Resetting..." : "Reset Password"}
           {!isSubmitting && <ArrowRightIcon className="size-5" />}
         </Button>
       </form>
 
       <p className="mt-6 text-center text-body text-slate-medium">
-        Don&apos;t have an account?{" "}
+        Remember your password?{" "}
         <Link
-          href="/register"
+          href="/login"
           className="font-bold text-accent transition-colors hover:text-accent-green"
         >
-          Sign up here
+          Log in
         </Link>
       </p>
     </div>
   );
 }
 
-export default function LoginPage() {
+export default function ResetPasswordPage() {
   return (
     <div className="grid min-h-[calc(100vh-112px)] lg:grid-cols-2">
       {/* Left — Hero Image */}
@@ -135,10 +126,10 @@ export default function LoginPage() {
         <div className="absolute inset-0 bg-primary/20" />
       </div>
 
-      {/* Right — Login Form */}
+      {/* Right — Form */}
       <div className="flex items-center justify-center bg-surface-page px-4 py-16">
         <Suspense>
-          <LoginForm />
+          <ResetPasswordForm />
         </Suspense>
       </div>
     </div>

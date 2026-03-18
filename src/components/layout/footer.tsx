@@ -10,6 +10,7 @@ const QUICK_LINKS = [
   { href: "/causes", label: "Services" },
   { href: "/blog", label: "Blog" },
   { href: "/contact", label: "Contact us" },
+  { href: "/privacy-policy", label: "Privacy Policy" },
 ] as const;
 
 const SOCIAL_LINKS = [
@@ -195,7 +196,13 @@ export function Footer() {
 
       {/* Bottom bar — copyright right-aligned */}
       <div className="relative border-t border-surface-border">
-        <Container className="flex items-center justify-end py-8">
+        <Container className="flex items-center justify-between py-8">
+          <Link
+            href="/privacy-policy"
+            className="text-label uppercase tracking-[1.2px] text-slate-light transition-colors hover:text-accent"
+          >
+            Privacy Policy
+          </Link>
           <Text variant="muted" size="label" className="tracking-[1.2px] uppercase">
             &copy; 2026 Surgery Care Foundation. All Rights Reserved.
           </Text>
