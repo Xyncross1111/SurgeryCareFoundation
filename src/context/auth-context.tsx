@@ -23,15 +23,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  // Rehydrate session on mount
+  // Rehydrate session on mount — try refreshing the token first,
+  // then fetch the full session profile.
   useEffect(() => {
     authService
-      .getMe()
-      .then((data) => {
-        setUser(data.user);
-        if (data.accessToken) {
-          setAccessToken(data.accessToken);
-        }
+      .refreshToken()
+      .then((tokens) => {
+        setAccessToken(tokens.accessToken);
+        return authService.getMe();
+      })
+      .then((session) => {
+        setUser(session);
       })
       .catch(() => {
         setUser(null);
@@ -45,8 +47,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async (data: LoginRequest) => {
       const result = await authService.login(data);
       setAccessToken(result.accessToken);
-      const me = await authService.getMe();
-      setUser(me.user);
+      const session = await authService.getMe();
+      setUser(session);
     },
     [],
   );
@@ -55,8 +57,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async (data: RegisterRequest) => {
       const result = await authService.register(data);
       setAccessToken(result.accessToken);
-      const me = await authService.getMe();
-      setUser(me.user);
+      const session = await authService.getMe();
+      setUser(session);
     },
     [],
   );

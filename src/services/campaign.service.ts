@@ -18,16 +18,20 @@ export const campaignService = {
     return apiClient.get<Campaign>(`/public/campaigns/${slug}`);
   },
 
-  getUpdates(slug: string) {
-    return apiClient.get<CampaignUpdate[]>(`/public/campaigns/${slug}/updates`);
+  getUpdates(slug: string, params?: { page?: number; limit?: number }) {
+    return apiClient.get<PaginatedData<CampaignUpdate>>(`/public/campaigns/${slug}/updates`, {
+      params: params as Record<string, string | number | boolean | undefined>,
+    });
   },
 
   create(data: CreateCampaignRequest) {
     return apiClient.post<Campaign>("/campaigns", data);
   },
 
-  getMyCampaigns() {
-    return apiClient.get<Campaign[]>("/campaigns/me");
+  getMyCampaigns(params?: { page?: number; limit?: number }) {
+    return apiClient.get<PaginatedData<Campaign>>("/campaigns/me", {
+      params: params as Record<string, string | number | boolean | undefined>,
+    });
   },
 
   getById(id: string) {
@@ -39,21 +43,14 @@ export const campaignService = {
   },
 
   submit(id: string) {
-    return apiClient.post<void>(`/campaigns/${id}/submit`);
-  },
-
-  getUploadUrl(id: string, data: { fileName: string; fileType: string }) {
-    return apiClient.post<{ uploadUrl: string; fileKey: string }>(
-      `/campaigns/${id}/documents/upload-url`,
-      data,
-    );
+    return apiClient.post<Campaign>(`/campaigns/${id}/submit`);
   },
 
   addUpdate(id: string, data: { title: string; content: string }) {
     return apiClient.post<CampaignUpdate>(`/campaigns/${id}/updates`, data);
   },
 
-  requestWithdrawal(id: string, data: { amount: number; bankDetails: string }) {
-    return apiClient.post<void>(`/campaigns/${id}/withdrawals`, data);
+  requestWithdrawal(data: { campaignId: string; amount: number; reason?: string }) {
+    return apiClient.post<void>("/withdrawals", data);
   },
 };

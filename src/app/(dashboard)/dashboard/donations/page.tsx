@@ -12,25 +12,23 @@ import { CalendarIcon, CheckCircleIcon, ClockIcon, HeartIcon } from "@/component
 
 type DonationStatus = "succeeded" | "pending" | "failed";
 
-interface Donation {
+interface DonationItem {
   id: string;
-  campaignId: string;
-  patientName: string;
-  condition: string;
+  campaignSlug: string;
+  campaignTitle: string;
   amount: number;
-  date: string;
+  createdAt: string;
   status: DonationStatus;
-  receiptId: string | null;
-  image: string;
+  receiptNumber: string | null;
 }
 
-const DONATIONS: Donation[] = [
-  { id: "don-001", campaignId: "pallavi-mane", patientName: "Pallavi Mane", condition: "Cancer", amount: 15000, date: "Mar 12, 2026", status: "succeeded", receiptId: "REC-2026-001", image: "/images/hero-1.jpg" },
-  { id: "don-002", campaignId: "samarth-verma", patientName: "Samarth Verma", condition: "Brain Tumor", amount: 10000, date: "Mar 10, 2026", status: "succeeded", receiptId: "REC-2026-002", image: "/images/hero-2.jpg" },
-  { id: "don-003", campaignId: "aloke-dubey", patientName: "Aloke Dubey", condition: "Chronic Kidney", amount: 15000, date: "Mar 8, 2026", status: "succeeded", receiptId: "REC-2026-003", image: "/images/hero-3.jpg" },
-  { id: "don-004", campaignId: "gagubai-kate", patientName: "Gagubai Kate", condition: "Heart Blockage", amount: 5000, date: "Mar 5, 2026", status: "pending", receiptId: null, image: "/images/hero-4.jpg" },
-  { id: "don-005", campaignId: "dinesh-joshi", patientName: "Dinesh Joshi", condition: "Cancer", amount: 2000, date: "Feb 28, 2026", status: "failed", receiptId: null, image: "/images/hero-1.jpg" },
-  { id: "don-006", campaignId: "asha-khandekar", patientName: "Asha Khandekar", condition: "Breast Cancer", amount: 8000, date: "Feb 20, 2026", status: "succeeded", receiptId: "REC-2026-004", image: "/images/hero-2.jpg" },
+const DONATIONS: DonationItem[] = [
+  { id: "don-001", campaignSlug: "pallavi-mane", campaignTitle: "Pallavi Mane — Cancer Treatment", amount: 15000, createdAt: "2026-03-12", status: "succeeded", receiptNumber: "REC-2026-001" },
+  { id: "don-002", campaignSlug: "samarth-verma", campaignTitle: "Samarth Verma — Brain Tumor Surgery", amount: 10000, createdAt: "2026-03-10", status: "succeeded", receiptNumber: "REC-2026-002" },
+  { id: "don-003", campaignSlug: "aloke-dubey", campaignTitle: "Aloke Dubey — Kidney Transplant", amount: 15000, createdAt: "2026-03-08", status: "succeeded", receiptNumber: "REC-2026-003" },
+  { id: "don-004", campaignSlug: "gagubai-kate", campaignTitle: "Gagubai Kate — Heart Blockage", amount: 5000, createdAt: "2026-03-05", status: "pending", receiptNumber: null },
+  { id: "don-005", campaignSlug: "dinesh-joshi", campaignTitle: "Dinesh Joshi — Cancer Treatment", amount: 2000, createdAt: "2026-02-28", status: "failed", receiptNumber: null },
+  { id: "don-006", campaignSlug: "asha-khandekar", campaignTitle: "Asha Khandekar — Breast Cancer", amount: 8000, createdAt: "2026-02-20", status: "succeeded", receiptNumber: "REC-2026-004" },
 ];
 
 const FILTERS = ["All", "Succeeded", "Pending", "Failed"] as const;
@@ -80,7 +78,7 @@ export default function DonationHistoryPage() {
             <CalendarIcon className="size-5" />
           </div>
           <Text variant="muted" size="label" className="mb-1">Last Donation</Text>
-          <p className="text-h4 text-primary">{DONATIONS[0].date}</p>
+          <p className="text-h4 text-primary">{new Date(DONATIONS[0].createdAt).toLocaleDateString()}</p>
         </div>
       </div>
 
@@ -127,18 +125,18 @@ export default function DonationHistoryPage() {
               const cfg = STATUS_CONFIG[donation.status];
               return (
                 <div key={donation.id} className="flex flex-col gap-4 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
-                  {/* Left: patient info */}
+                  {/* Left: campaign info */}
                   <div className="flex items-center gap-4">
-                    <Avatar src={donation.image} alt={donation.patientName} size="md" />
+                    <Avatar initials={donation.campaignTitle.slice(0, 2).toUpperCase()} size="md" />
                     <div>
                       <Link
-                        href={`/causes/${donation.campaignId}`}
+                        href={`/causes/${donation.campaignSlug}`}
                         className="text-btn font-black text-primary hover:text-accent transition-colors"
                       >
-                        {donation.patientName}
+                        {donation.campaignTitle}
                       </Link>
                       <Text variant="muted" size="label" className="normal-case tracking-normal">
-                        {donation.date} &bull; {donation.condition}
+                        {new Date(donation.createdAt).toLocaleDateString()}
                       </Text>
                     </div>
                   </div>
@@ -150,7 +148,7 @@ export default function DonationHistoryPage() {
                     </Badge>
                     <div className="text-right">
                       <p className="text-btn font-black text-accent">&#8377; {formatINR(donation.amount)}</p>
-                      {donation.receiptId ? (
+                      {donation.receiptNumber ? (
                         <button
                           type="button"
                           className="text-label text-primary hover:text-accent transition-colors font-bold"

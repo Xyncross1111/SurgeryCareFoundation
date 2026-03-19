@@ -23,11 +23,11 @@ export const authService = {
   },
 
   refreshToken() {
-    return apiClient.post<AuthTokens>("/auth/refresh");
+    return apiClient.post<{ accessToken: string }>("/auth/refresh");
   },
 
   getMe() {
-    return apiClient.get<{ user: User; accessToken?: string }>("/auth/me");
+    return apiClient.get<User>("/auth/me");
   },
 
   forgotPassword(data: ForgotPasswordRequest) {

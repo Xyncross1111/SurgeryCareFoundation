@@ -6,51 +6,25 @@ export type UserRole =
   | "finance_manager"
   | "super_admin";
 
-export interface UserAddress {
-  street: string;
-  city: string;
-  district: string;
-  postalCode: string;
-  state: string;
-  country: string;
-  nationality: string;
-}
-
-export interface UserKyc {
-  idProofType: string;
-  idProofNumber: string;
-  isVerified: boolean;
-}
-
-export interface UserFinancial {
-  bankName: string;
-  accountNumberLast4: string;
-  panCardNumber: string;
-  beneficiaryDetails: string;
-}
-
 export interface User {
   id: string;
   email: string;
   firstName: string;
   lastName: string;
-  username: string;
-  phone: string;
-  alternatePhone?: string;
-  dateOfBirth?: string;
-  preferredLanguage?: string;
-  gender?: string;
-  bloodGroup?: string;
-  occupation?: string;
-  organizationName?: string;
-  avatar?: string;
-  role: UserRole;
-  isVerified: boolean;
-  createdAt: string;
-  profileCompletion: number;
-  address?: UserAddress;
-  kyc?: UserKyc;
-  financial?: UserFinancial;
+  phone: string | null;
+  avatarUrl: string | null;
+  roles: UserRole[];
+  permissions: string[];
+  accountStatus: string;
+}
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  roles: string[];
+  accountStatus: string;
 }
 
 export interface LoginRequest {
@@ -67,6 +41,7 @@ export interface RegisterRequest {
 }
 
 export interface AuthTokens {
+  user: AuthUser;
   accessToken: string;
 }
 

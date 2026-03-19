@@ -1,10 +1,8 @@
 import { apiClient } from "@/lib/api-client";
 import type {
-  BlogPost,
   PartnerHospital,
   BoardMember,
   AnnualReport,
-  SiteStats,
 } from "@/types/content";
 
 export const publicService = {
@@ -25,14 +23,6 @@ export const publicService = {
   },
 
   getStats() {
-    return apiClient.get<SiteStats>("/public/stats");
-  },
-
-  getBlogPosts() {
-    return apiClient.get<BlogPost[]>("/public/blog");
-  },
-
-  getBlogPost(slug: string) {
-    return apiClient.get<BlogPost>(`/public/blog/${slug}`);
+    return apiClient.get<{ totalRaised: number; totalDonors: number; totalCampaigns: number }>("/public/stats");
   },
 };

@@ -13,40 +13,40 @@ import { BookmarkIcon } from "@/components/ui/icons";
 
 interface SavedCause {
   id: string;
-  name: string;
-  age: number;
-  condition: string;
-  description: string;
-  raised: number;
-  goal: number;
-  backers: number;
-  image: string;
+  slug: string;
+  title: string;
+  category: string;
+  summary: string;
+  raisedAmount: number;
+  goalAmount: number;
+  donationCount: number;
+  coverImageUrl: string;
   savedOn: string;
 }
 
 const SAVED_CAUSES: SavedCause[] = [
   {
-    id: "pallavi-mane",
-    name: "Pallavi Mane",
-    age: 25,
-    condition: "Cancer",
-    description: "Pallavi needs urgent chemotherapy treatment. Every contribution brings her closer to recovery.",
-    raised: 150000,
-    goal: 300000,
-    backers: 319,
-    image: "/images/hero-1.jpg",
+    id: "1",
+    slug: "pallavi-mane",
+    title: "Pallavi Mane",
+    category: "Cancer",
+    summary: "Pallavi needs urgent chemotherapy treatment. Every contribution brings her closer to recovery.",
+    raisedAmount: 150000,
+    goalAmount: 300000,
+    donationCount: 319,
+    coverImageUrl: "/images/hero-1.jpg",
     savedOn: "Mar 10, 2026",
   },
   {
-    id: "samarth-verma",
-    name: "Samarth Verma",
-    age: 51,
-    condition: "Brain Tumor",
-    description: "Samarth requires a critical brain surgery. Your support can give him a second chance at life.",
-    raised: 250000,
-    goal: 350000,
-    backers: 519,
-    image: "/images/hero-2.jpg",
+    id: "2",
+    slug: "samarth-verma",
+    title: "Samarth Verma",
+    category: "Brain Tumor",
+    summary: "Samarth requires a critical brain surgery. Your support can give him a second chance at life.",
+    raisedAmount: 250000,
+    goalAmount: 350000,
+    donationCount: 519,
+    coverImageUrl: "/images/hero-2.jpg",
     savedOn: "Mar 6, 2026",
   },
 ];
@@ -83,62 +83,59 @@ export default function SavedCausesPage() {
       ) : (
         <div className="space-y-4">
           {causes.map((cause) => {
-            const pct = Math.round((cause.raised / cause.goal) * 100);
+            const pct = Math.round((cause.raisedAmount / cause.goalAmount) * 100);
             return (
               <div key={cause.id} className="rounded-2xl border border-surface-border bg-white shadow-card">
                 <div className="flex flex-col gap-6 p-6 sm:flex-row">
                   {/* Image */}
                   <div className="relative h-44 w-full shrink-0 overflow-hidden rounded-xl sm:h-auto sm:w-44">
                     <Image
-                      src={cause.image}
-                      alt={cause.name}
+                      src={cause.coverImageUrl}
+                      alt={cause.title}
                       fill
                       className="object-cover"
                       sizes="(min-width: 640px) 176px, 100vw"
                     />
-                    <span className="absolute right-2 top-2 z-10 rounded-full bg-white px-2 py-0.5 text-caption font-black uppercase tracking-wide text-primary">
-                      Age {cause.age}
-                    </span>
                   </div>
 
                   {/* Details */}
                   <div className="flex flex-1 flex-col">
                     <div className="mb-2 flex items-center gap-3">
-                      <Badge variant="accent" className="text-[10px]">{cause.condition}</Badge>
+                      <Badge variant="accent" className="text-[10px]">{cause.category}</Badge>
                       <Text variant="muted" size="label" className="normal-case tracking-normal">
                         Saved on {cause.savedOn}
                       </Text>
                     </div>
 
                     <Heading level="h4" as="h2" className="mb-2 text-accent">
-                      Help {cause.name} Fight {cause.condition}
+                      {cause.title}
                     </Heading>
 
                     <Text variant="secondary" className="mb-4 line-clamp-2">
-                      {cause.description}
+                      {cause.summary}
                     </Text>
 
                     {/* Progress */}
                     <div className="mb-1 flex items-baseline justify-between">
                       <Text className="font-black text-primary">
-                        &#8377; {formatINR(cause.raised)} raised
+                        &#8377; {formatINR(cause.raisedAmount)} raised
                       </Text>
                       <Text variant="muted" size="label" className="normal-case tracking-normal">
-                        Goal: &#8377; {formatINR(cause.goal)} &bull; {pct}%
+                        Goal: &#8377; {formatINR(cause.goalAmount)} &bull; {pct}%
                       </Text>
                     </div>
-                    <ProgressBar value={cause.raised} max={cause.goal} className="mb-4" />
+                    <ProgressBar value={cause.raisedAmount} max={cause.goalAmount} className="mb-4" />
 
                     {/* Actions */}
                     <div className="flex flex-wrap gap-3">
                       <Link
-                        href={`/causes/${cause.id}`}
+                        href={`/causes/${cause.slug}`}
                         className={buttonVariants({ variant: "secondary", className: "flex-1 sm:flex-none" })}
                       >
                         Donate Now
                       </Link>
                       <Link
-                        href={`/causes/${cause.id}`}
+                        href={`/causes/${cause.slug}`}
                         className={buttonVariants({ variant: "outline", className: "flex-1 sm:flex-none" })}
                       >
                         View Details

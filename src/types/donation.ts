@@ -9,28 +9,26 @@ export type DonationStatus =
 export interface Donation {
   id: string;
   campaignId: string;
-  campaignSlug: string;
-  patientName: string;
-  condition: string;
+  donorId: string | null;
+  donorName: string | null;
+  donorEmail: string | null;
   amount: number;
-  date: string;
+  currency: string;
+  isAnonymous: boolean;
+  message: string | null;
   status: DonationStatus;
-  receiptId: string | null;
-  receiptUrl: string | null;
-  image: string;
-}
-
-export interface SavedCause {
-  id: string;
-  name: string;
-  age: number;
-  condition: string;
-  description: string;
-  raised: number;
-  goal: number;
-  backers: number;
-  image: string;
-  savedOn: string;
+  createdAt: string;
+  updatedAt: string;
+  campaign: {
+    id: string;
+    title: string;
+    slug: string;
+  };
+  receipt: {
+    id: string;
+    receiptNumber: string;
+    issuedAt: string;
+  } | null;
 }
 
 export type WithdrawalStatus =

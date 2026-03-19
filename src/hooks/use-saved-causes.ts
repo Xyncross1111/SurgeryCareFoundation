@@ -1,5 +1,18 @@
 import { useState, useEffect, useCallback } from "react";
-import type { SavedCause } from "@/types/donation";
+
+/** Lightweight shape for causes bookmarked in localStorage. */
+export interface SavedCause {
+  id: string;
+  slug: string;
+  title: string;
+  summary: string;
+  coverImageUrl: string | null;
+  goalAmount: number;
+  raisedAmount: number;
+  donationCount: number;
+  category: string;
+  savedOn: string;
+}
 
 const STORAGE_KEY = "surgery-care:saved-causes";
 

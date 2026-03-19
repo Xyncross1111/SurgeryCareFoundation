@@ -11,103 +11,99 @@ import { formatINR } from "@/lib/format";
 
 interface Cause {
   id: string;
-  name: string;
-  age: number;
-  condition: string;
-  description: string;
-  raised: number;
-  goal: number;
-  backers: number;
-  image: string;
+  slug: string;
+  title: string;
+  category: string;
+  summary: string;
+  raisedAmount: number;
+  goalAmount: number;
+  donationCount: number;
+  coverImageUrl: string;
 }
 
 const CAUSES: Cause[] = [
   {
-    id: "pallavi-mane",
-    name: "Pallavi Mane",
-    age: 25,
-    condition: "Cancer",
-    description: "Urgent medical support needed. Your donation can save a life today.",
-    raised: 150000,
-    goal: 300000,
-    backers: 319,
-    image: "/images/hero-1.jpg",
+    id: "1",
+    slug: "pallavi-mane",
+    title: "Pallavi Mane",
+    category: "Cancer",
+    summary: "Urgent medical support needed. Your donation can save a life today.",
+    raisedAmount: 150000,
+    goalAmount: 300000,
+    donationCount: 319,
+    coverImageUrl: "/images/hero-1.jpg",
   },
   {
-    id: "samarth-verma",
-    name: "Samarth Verma",
-    age: 51,
-    condition: "Brain Tumor",
-    description: "Urgent medical support needed. Your donation can save a life today.",
-    raised: 250000,
-    goal: 350000,
-    backers: 519,
-    image: "/images/hero-2.jpg",
+    id: "2",
+    slug: "samarth-verma",
+    title: "Samarth Verma",
+    category: "Brain Tumor",
+    summary: "Urgent medical support needed. Your donation can save a life today.",
+    raisedAmount: 250000,
+    goalAmount: 350000,
+    donationCount: 519,
+    coverImageUrl: "/images/hero-2.jpg",
   },
   {
-    id: "aloke-dubey",
-    name: "Aloke Dubey",
-    age: 33,
-    condition: "Chronic Kidney",
-    description: "Urgent medical support needed. Your donation can save a life today.",
-    raised: 200000,
-    goal: 500000,
-    backers: 422,
-    image: "/images/hero-3.jpg",
+    id: "3",
+    slug: "aloke-dubey",
+    title: "Aloke Dubey",
+    category: "Chronic Kidney",
+    summary: "Urgent medical support needed. Your donation can save a life today.",
+    raisedAmount: 200000,
+    goalAmount: 500000,
+    donationCount: 422,
+    coverImageUrl: "/images/hero-3.jpg",
   },
   {
-    id: "gagubai-kate",
-    name: "Gagubai Kate",
-    age: 23,
-    condition: "Heart Blockage",
-    description: "Urgent medical support needed. Your donation can save a life today.",
-    raised: 20000,
-    goal: 100000,
-    backers: 69,
-    image: "/images/hero-4.jpg",
+    id: "4",
+    slug: "gagubai-kate",
+    title: "Gagubai Kate",
+    category: "Heart Blockage",
+    summary: "Urgent medical support needed. Your donation can save a life today.",
+    raisedAmount: 20000,
+    goalAmount: 100000,
+    donationCount: 69,
+    coverImageUrl: "/images/hero-4.jpg",
   },
 ];
 
 function CauseCard({ cause }: { cause: Cause }) {
-  const percentage = Math.round((cause.raised / cause.goal) * 100);
+  const percentage = Math.round((cause.raisedAmount / cause.goalAmount) * 100);
 
   return (
     <Card>
       {/* Image with overlay */}
       <div className="relative h-56 overflow-hidden">
         <Image
-          src={cause.image}
-          alt={cause.name}
+          src={cause.coverImageUrl}
+          alt={cause.title}
           fill
           className="object-cover"
           sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
         />
-        {/* Age badge */}
-        <span className="absolute right-3 top-3 z-10 rounded-full bg-white px-2.5 py-1 text-caption font-black uppercase tracking-wide text-primary">
-          Age {cause.age}
-        </span>
 
-        {/* Name & condition overlay */}
+        {/* Name & category overlay */}
         <div className="absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black/60 to-transparent p-4 pt-12">
-          <p className="text-lg font-black text-white">{cause.name}</p>
+          <p className="text-lg font-black text-white">{cause.title}</p>
           <Badge variant="accent" className="mt-1 text-caption">
-            {cause.condition}
+            {cause.category}
           </Badge>
         </div>
       </div>
 
       <CardContent>
         <Text variant="secondary" className="mb-4 line-clamp-2">
-          {cause.description}
+          {cause.summary}
         </Text>
 
         {/* Stats row */}
         <div className="mb-1 flex items-baseline justify-between">
           <p className="text-btn font-black text-primary">
-            &#8377; {formatINR(cause.raised)}
+            &#8377; {formatINR(cause.raisedAmount)}
           </p>
           <p className="text-btn font-black text-primary">
-            {cause.backers}
+            {cause.donationCount}
           </p>
         </div>
         <div className="mb-3 flex justify-between">
@@ -118,15 +114,15 @@ function CauseCard({ cause }: { cause: Cause }) {
         {/* Progress */}
         <div className="mb-1 flex justify-between">
           <Text as="span" variant="muted" size="label">
-            Goal: &#8377; {formatINR(cause.goal)}
+            Goal: &#8377; {formatINR(cause.goalAmount)}
           </Text>
           <Text as="span" variant="muted" size="label">{percentage}%</Text>
         </div>
-        <ProgressBar value={cause.raised} max={cause.goal} className="mb-4" />
+        <ProgressBar value={cause.raisedAmount} max={cause.goalAmount} className="mb-4" />
 
         {/* CTA */}
         <Link
-          href={`/causes/${cause.id}`}
+          href={`/causes/${cause.slug}`}
           className={buttonVariants({
             variant: "outline",
             size: "default",

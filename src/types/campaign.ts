@@ -15,26 +15,25 @@ export interface Campaign {
   id: string;
   slug: string;
   title: string;
-  patientName: string;
-  age: number;
-  condition: string;
-  category: string;
+  summary: string;
   description: string;
-  detailedDescription?: string;
-  hospitalName?: string;
+  category: string;
   urgencyLevel: UrgencyLevel;
   status: CampaignStatus;
   creatorId: string;
-  raised: number;
-  goal: number;
-  backers: number;
-  image: string;
-  images?: string[];
-  documents?: string[];
+  goalAmount: number;
+  raisedAmount: number;
+  currency: string;
+  coverImageUrl: string | null;
+  videoUrl: string | null;
+  startDate: string | null;
+  endDate: string | null;
+  publishedAt: string | null;
+  completedAt: string | null;
   createdAt: string;
   updatedAt: string;
-  approvedAt?: string;
-  completedAt?: string;
+  creator?: { id: string; firstName: string; lastName: string };
+  _count?: { donations: number };
 }
 
 export interface CampaignUpdate {
@@ -50,23 +49,22 @@ export interface CampaignMilestone {
   campaignId: string;
   title: string;
   targetAmount: number;
+  description?: string;
   isReached: boolean;
   reachedAt?: string;
 }
 
 export interface CreateCampaignRequest {
   title: string;
-  patientName: string;
-  age: number;
-  condition: string;
+  summary: string;
+  description?: string;
   category: string;
-  description: string;
-  detailedDescription?: string;
-  hospitalName?: string;
   urgencyLevel: UrgencyLevel;
-  goal: number;
-  relationship: string;
-  phone: string;
+  goalAmount: number;
+  coverImageUrl?: string;
+  videoUrl?: string;
+  startDate?: string;
+  endDate?: string;
 }
 
 export interface CampaignFilters {

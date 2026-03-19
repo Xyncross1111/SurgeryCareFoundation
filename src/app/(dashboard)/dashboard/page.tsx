@@ -12,9 +12,9 @@ const STATS = [
 ] as const;
 
 const DONATIONS = [
-  { name: "Pallavi Mane", date: "Mar 12, 2026", condition: "Cancer", amount: "₹ 15,000", image: "/images/hero-1.jpg" },
-  { name: "Ryan D'costa", date: "Mar 12, 2026", condition: "Brain Tumor", amount: "₹ 15,000", image: "/images/hero-2.jpg" },
-  { name: "Aloke Dubey", date: "Mar 12, 2026", condition: "Chronic Kidney", amount: "₹ 15,000", image: "/images/hero-3.jpg" },
+  { campaignTitle: "Pallavi Mane — Cancer Treatment", createdAt: "2026-03-12", amount: "₹ 15,000" },
+  { campaignTitle: "Ryan D'costa — Brain Tumor Surgery", createdAt: "2026-03-12", amount: "₹ 15,000" },
+  { campaignTitle: "Aloke Dubey — Kidney Transplant", createdAt: "2026-03-12", amount: "₹ 15,000" },
 ] as const;
 
 export default function DashboardPage() {
@@ -52,13 +52,13 @@ export default function DashboardPage() {
 
         <div className="divide-y divide-surface-border">
           {DONATIONS.map((d) => (
-            <div key={d.name} className="flex items-center justify-between px-6 py-4">
+            <div key={d.campaignTitle} className="flex items-center justify-between px-6 py-4">
               <div className="flex items-center gap-4">
-                <Avatar src={d.image} alt={d.name} size="md" />
+                <Avatar initials={d.campaignTitle.slice(0, 2).toUpperCase()} size="md" />
                 <div>
-                  <p className="text-btn font-black text-primary">{d.name}</p>
+                  <p className="text-btn font-black text-primary">{d.campaignTitle}</p>
                   <Text variant="muted" size="label" className="normal-case tracking-normal">
-                    Donated on {d.date} &bull; {d.condition}
+                    Donated on {new Date(d.createdAt).toLocaleDateString()}
                   </Text>
                 </div>
               </div>
