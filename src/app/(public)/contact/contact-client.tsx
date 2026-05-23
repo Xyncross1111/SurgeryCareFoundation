@@ -12,6 +12,10 @@ import { Button } from "@/components/ui/button";
 import { PhoneIcon, MapPinIcon, SendIcon } from "@/components/ui/icons";
 import { useToast } from "@/components/ui/toast";
 import { contactService } from "@/services/contact.service";
+import {
+  TurnstileWidget,
+  isTurnstileConfigured,
+} from "@/components/shared/turnstile-widget";
 
 export default function ContactClient() {
   const { toast } = useToast();
@@ -22,14 +26,28 @@ export default function ContactClient() {
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const captchaRequired = isTurnstileConfigured();
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    if (captchaRequired && !captchaToken) {
+      toast("Please complete the verification challenge before sending.", "error");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
       const name = `${firstName} ${lastName}`.trim();
-      await contactService.send({ name, email, subject, message });
+      await contactService.send({
+        name,
+        email,
+        subject,
+        message,
+        ...(captchaToken ? { captchaToken } : {}),
+      });
       toast("Message sent! We'll get back to you soon.", "success");
       setFirstName("");
       setLastName("");
@@ -97,11 +115,12 @@ export default function ContactClient() {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                 />
+                <TurnstileWidget action="contact" onToken={setCaptchaToken} />
                 <Button
                   variant="secondary"
                   size="lg"
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || (captchaRequired && !captchaToken)}
                   className="gap-2 rounded-[14px] text-[16px] font-black"
                 >
                   {isSubmitting ? "Sending..." : "Send Message"}

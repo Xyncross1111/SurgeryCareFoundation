@@ -31,6 +31,7 @@ export interface AuthUser {
 export interface LoginRequest {
   email: string;
   password: string;
+  captchaToken?: string;
 }
 
 export interface RegisterRequest {
@@ -39,6 +40,7 @@ export interface RegisterRequest {
   email: string;
   phone?: string;
   password: string;
+  captchaToken?: string;
 }
 
 export interface AuthTokens {

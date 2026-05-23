@@ -49,6 +49,7 @@ export interface ContactFormData {
   email: string;
   subject: string;
   message: string;
+  captchaToken?: string;
 }
 
 export interface SiteStats {

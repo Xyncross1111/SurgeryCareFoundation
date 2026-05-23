@@ -13,6 +13,10 @@ import { useAuth } from "@/context/auth-context";
 import { ApiError } from "@/lib/api-error";
 import { useToast } from "@/components/ui/toast";
 import { getDefaultAppRoute } from "@/lib/get-default-app-route";
+import {
+  TurnstileWidget,
+  isTurnstileConfigured,
+} from "@/components/shared/turnstile-widget";
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -27,6 +31,8 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const captchaRequired = isTurnstileConfigured();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -34,6 +40,11 @@ export default function RegisterPage() {
 
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
+      return;
+    }
+
+    if (captchaRequired && !captchaToken) {
+      setError("Please complete the verification challenge before creating your account.");
       return;
     }
 
@@ -45,6 +56,7 @@ export default function RegisterPage() {
         email,
         phone: phone || undefined,
         password,
+        ...(captchaToken ? { captchaToken } : {}),
       });
       const greetName = session.firstName?.trim() || session.email;
       toast(`Welcome, ${greetName}! Your account has been created.`, "success");
@@ -147,12 +159,14 @@ export default function RegisterPage() {
               minLength={8}
             />
 
+            <TurnstileWidget action="register" onToken={setCaptchaToken} />
+
             <Button
               variant="secondary"
               size="lg"
               type="submit"
               className="w-full gap-2"
-              disabled={isSubmitting}
+              disabled={isSubmitting || (captchaRequired && !captchaToken)}
             >
               {isSubmitting ? "Creating Account..." : "Create Account"}
               {!isSubmitting && <ArrowRightIcon className="size-5" />}

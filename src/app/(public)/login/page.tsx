@@ -13,6 +13,10 @@ import { useAuth } from "@/context/auth-context";
 import { ApiError } from "@/lib/api-error";
 import { getDefaultAppRoute } from "@/lib/get-default-app-route";
 import { useToast } from "@/components/ui/toast";
+import {
+  TurnstileWidget,
+  isTurnstileConfigured,
+} from "@/components/shared/turnstile-widget";
 
 function LoginForm() {
   const { login, user, isLoading, isAuthenticated } = useAuth();
@@ -24,6 +28,8 @@ function LoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const captchaRequired = isTurnstileConfigured();
 
   const resetSuccess = searchParams.get("reset") === "success";
 
@@ -44,10 +50,20 @@ function LoginForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+
+    if (captchaRequired && !captchaToken) {
+      setError("Please complete the verification challenge before signing in.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      const session = await login({ email, password });
+      const session = await login({
+        email,
+        password,
+        ...(captchaToken ? { captchaToken } : {}),
+      });
       const redirect = searchParams.get("redirect") || getDefaultAppRoute(session.roles);
       const greetName = session.firstName?.trim() || session.email;
       toast(`Welcome back, ${greetName}! You're logged in successfully.`, "success");
@@ -113,12 +129,14 @@ function LoginForm() {
           />
         </div>
 
+        <TurnstileWidget action="login" onToken={setCaptchaToken} />
+
         <Button
           variant="secondary"
           size="lg"
           type="submit"
           className="w-full gap-2"
-          disabled={isSubmitting}
+          disabled={isSubmitting || (captchaRequired && !captchaToken)}
         >
           {isSubmitting ? "Signing In..." : "Sign In"}
           {!isSubmitting && <ArrowRightIcon className="size-5" />}

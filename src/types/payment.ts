@@ -6,6 +6,7 @@ export interface CreateDonationRequest {
   message?: string;
   donorName?: string;
   donorEmail?: string;
+  captchaToken?: string;
 }
 
 export interface CreatedDonation {

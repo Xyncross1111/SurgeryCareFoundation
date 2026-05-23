@@ -17,6 +17,10 @@ import { Text } from "@/components/ui/text";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LockIcon } from "@/components/ui/icons";
+import {
+  TurnstileWidget,
+  isTurnstileConfigured,
+} from "@/components/shared/turnstile-widget";
 
 const AMOUNTS = [1000, 5000, 10000] as const;
 
@@ -65,6 +69,8 @@ export default function CheckoutPage({ params }: { params: { id: string } }) {
   const [email, setEmail] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const captchaRequired = isTurnstileConfigured() && !user;
 
   const donationAmount = customAmount ? parseInt(customAmount, 10) || 0 : selectedAmount;
 
@@ -83,6 +89,10 @@ export default function CheckoutPage({ params }: { params: { id: string } }) {
     }
     if (!campaign) {
       toast("Campaign details are not loaded yet.", "error");
+      return;
+    }
+    if (captchaRequired && !captchaToken) {
+      toast("Please complete the verification challenge before donating.", "error");
       return;
     }
 
@@ -104,7 +114,10 @@ export default function CheckoutPage({ params }: { params: { id: string } }) {
         donation = initiation.donation;
         paymentIntent = initiation.paymentIntent;
       } else {
-        donation = await paymentService.createGuestDonation(donationPayload);
+        donation = await paymentService.createGuestDonation({
+          ...donationPayload,
+          ...(captchaToken ? { captchaToken } : {}),
+        });
         paymentIntent = await paymentService.createGuestIntent({
           donationId: donation.id,
           amount: donationAmount,
@@ -272,12 +285,18 @@ export default function CheckoutPage({ params }: { params: { id: string } }) {
                 </Text>
               </div>
 
+              {!user && (
+                <div className="mb-6">
+                  <TurnstileWidget action="guest-donation" onToken={setCaptchaToken} />
+                </div>
+              )}
+
               <Button
                 variant="primary"
                 size="lg"
                 className="w-full"
                 onClick={handleSubmit}
-                disabled={isSubmitting}
+                disabled={isSubmitting || (captchaRequired && !captchaToken)}
               >
                 {isSubmitting
                   ? "Opening Payment..."
