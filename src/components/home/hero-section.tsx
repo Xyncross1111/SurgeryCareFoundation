@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/container";
 import { Heading } from "@/components/ui/heading";
 import { Text } from "@/components/ui/text";
@@ -32,6 +35,7 @@ const HERO_IMAGES = [
 ] as const;
 
 export function HeroSection() {
+  const t = useTranslations("hero");
   return (
     <section className="relative overflow-hidden bg-primary">
       {/* Background heart watermark */}
@@ -60,9 +64,9 @@ export function HeroSection() {
 
             {/* Heading */}
             <Heading level="h1" className="mb-6 text-white lg:!text-[72px] lg:!leading-[76px] lg:!tracking-[-1.8px]">
-              Quality Surgery for{" "}
+              {t("headingPrefix")}{" "}
               <span className="bg-gradient-to-b from-accent-mint to-accent-green bg-clip-text text-transparent">
-                Every Patient
+                {t("headingHighlight")}
               </span>
             </Heading>
 
@@ -72,11 +76,7 @@ export function HeroSection() {
               size="body-lg"
               className="mb-6 max-w-md text-justify text-white/90"
             >
-              We connect patients to top hospitals across India for high-quality
-              treatment, and raise funds so that no family has to delay
-              life-saving surgery for cost. Every case is medically verified
-              before it goes live, and your contribution is sent directly to
-              the hospital, never to a personal account.
+              {t("description")}
             </Text>
 
             {/* CTA Button */}
@@ -88,7 +88,7 @@ export function HeroSection() {
                 className: "gap-3 pr-3",
               })}
             >
-              Donate Now
+              {t("donateNow")}
               <span className="inline-flex size-8 items-center justify-center rounded-full bg-white/30">
                 <ArrowRightIcon className="size-4 text-primary-deep" />
               </span>

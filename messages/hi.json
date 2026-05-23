@@ -1,0 +1,61 @@
+{
+  "header": {
+    "nav": {
+      "home": "होम",
+      "about": "हमारे बारे में",
+      "causes": "कारण",
+      "blog": "ब्लॉग",
+      "contact": "संपर्क करें"
+    },
+    "needHelp": "मदद चाहिए",
+    "donate": "दान करें",
+    "login": "लॉग इन",
+    "myAccount": "मेरा खाता",
+    "openMenu": "मेनू खोलें",
+    "closeMenu": "मेनू बंद करें",
+    "skipToContent": "मुख्य सामग्री पर जाएँ"
+  },
+  "hero": {
+    "headingPrefix": "हर मरीज़ के लिए",
+    "headingHighlight": "गुणवत्तापूर्ण सर्जरी",
+    "description": "हम मरीज़ों को भारत के प्रमुख अस्पतालों से जोड़ते हैं ताकि उन्हें उच्च गुणवत्ता का इलाज मिल सके, और धन जुटाते हैं ताकि किसी भी परिवार को पैसे की कमी के कारण ज़िंदगी बचाने वाली सर्जरी टालनी न पड़े। हर मामला लाइव होने से पहले चिकित्सकीय रूप से सत्यापित किया जाता है, और आपका योगदान सीधे अस्पताल को भेजा जाता है, कभी किसी निजी खाते में नहीं।",
+    "donateNow": "अभी दान करें"
+  },
+  "footer": {
+    "brandHeading": "सर्जरी केयर",
+    "brandTagline": "वादा",
+    "brandDescription": "Surgery Care Foundation में, हम हर दान को पारदर्शिता के साथ जीवन रक्षक इलाज में लगाते हैं, करुणा और भरोसे के साथ।",
+    "readOurStory": "हमारी कहानी पढ़ें",
+    "quickLinks": "त्वरित लिंक",
+    "links": {
+      "about": "हमारे बारे में",
+      "services": "सेवाएँ",
+      "blog": "ब्लॉग",
+      "contact": "संपर्क करें"
+    },
+    "contactHeading": "संपर्क करें",
+    "followUs": "हमें फॉलो करें",
+    "registrationsCompliance": "पंजीकरण एवं अनुपालन",
+    "legal": {
+      "privacy": "गोपनीयता नीति",
+      "terms": "उपयोग की शर्तें",
+      "refund": "रिफ़ंड नीति",
+      "donation": "दान नीति",
+      "disclaimer": "अस्वीकरण",
+      "aml": "AML नीति"
+    },
+    "compliance": {
+      "registeredNgo": "पंजीकृत एनजीओ",
+      "donorTaxBenefit": "दानकर्ता कर लाभ",
+      "incomeTaxExempt": "आयकर छूट",
+      "registeredNgoLong": "पंजीकृत एनजीओ",
+      "govtOfIndia": "भारत सरकार"
+    },
+    "copyright": "© {year} Surgery Care Foundation. सर्वाधिकार सुरक्षित।"
+  },
+  "language": {
+    "label": "भाषा",
+    "english": "English",
+    "hindi": "हिन्दी"
+  }
+}

@@ -73,6 +73,10 @@ export const userService = {
     return apiClient.patch<void>("/users/me/donor-profile", data);
   },
 
+  updateLanguagePreference(languagePreference: string) {
+    return apiClient.patch<void>("/users/me/donor-profile", { languagePreference });
+  },
+
   getDonations(params?: PaginationParams & { status?: string; campaignId?: string }) {
     return apiClient.get<PaginatedData<Donation>>("/donations/me", {
       params: params as Record<string, string | number | boolean | undefined>,

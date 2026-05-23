@@ -3,8 +3,10 @@ import Script from "next/script";
 import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { NextIntlClientProvider } from "next-intl";
 import { AuthProvider } from "@/context/auth-context";
 import { ToastProvider } from "@/components/ui/toast";
+import { getServerLocale, getMessagesForLocale } from "@/i18n/get-locale";
 import {
   ORG_CONTACT_EMAIL,
   ORG_CONTACT_PHONE,
@@ -136,13 +138,16 @@ const websiteJsonLd = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = getServerLocale();
+  const messages = await getMessagesForLocale(locale);
+
   return (
-    <html lang="en">
+    <html lang={locale}>
       <head>
         <script
           type="application/ld+json"
@@ -175,9 +180,11 @@ fbq('track', 'PageView');`}
             alt=""
           />
         </noscript>
-        <AuthProvider>
-          <ToastProvider>{children}</ToastProvider>
-        </AuthProvider>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <AuthProvider>
+            <ToastProvider>{children}</ToastProvider>
+          </AuthProvider>
+        </NextIntlClientProvider>
         <Analytics />
         <SpeedInsights />
       </body>

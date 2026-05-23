@@ -1,23 +1,26 @@
+"use client";
+
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/container";
 import { Heading } from "@/components/ui/heading";
 import { Text } from "@/components/ui/text";
 import { MailIcon, PhoneIcon, MapPinIcon, ArrowRightIcon, ShieldCheckIcon } from "@/components/ui/icons";
 
 const QUICK_LINKS = [
-  { href: "/about", label: "About Us" },
-  { href: "/causes", label: "Services" },
-  { href: "/blog", label: "Blog" },
-  { href: "/contact", label: "Contact us" },
+  { href: "/about", key: "about" },
+  { href: "/causes", key: "services" },
+  { href: "/blog", key: "blog" },
+  { href: "/contact", key: "contact" },
 ] as const;
 
 const LEGAL_LINKS = [
-  { href: "/privacy-policy", label: "Privacy Policy" },
-  { href: "/terms-of-use", label: "Terms of Use" },
-  { href: "/refund-policy", label: "Refund Policy" },
-  { href: "/donation-policy", label: "Donation Policy" },
-  { href: "/disclaimer", label: "Disclaimer" },
-  { href: "/aml-policy", label: "AML Policy" },
+  { href: "/privacy-policy", key: "privacy" },
+  { href: "/terms-of-use", key: "terms" },
+  { href: "/refund-policy", key: "refund" },
+  { href: "/donation-policy", key: "donation" },
+  { href: "/disclaimer", key: "disclaimer" },
+  { href: "/aml-policy", key: "aml" },
 ] as const;
 
 const SOCIAL_LINKS = [
@@ -51,13 +54,18 @@ const SOCIAL_LINKS = [
 ] as const;
 
 const COMPLIANCE_BADGES = [
-  { label: "80G", sub: "Donor Tax Benefit" },
-  { label: "12A", sub: "Income Tax Exempt" },
-  { label: "Section 8", sub: "Registered NGO" },
-  { label: "NGO Darpan", sub: "Govt of India" },
+  { label: "80G", subKey: "donorTaxBenefit" },
+  { label: "12A", subKey: "incomeTaxExempt" },
+  { label: "Section 8", subKey: "registeredNgoLong" },
+  { label: "NGO Darpan", subKey: "govtOfIndia" },
 ] as const;
 
 export function Footer() {
+  const t = useTranslations("footer");
+  const tCompliance = useTranslations("footer.compliance");
+  const tLegal = useTranslations("footer.legal");
+  const tLinks = useTranslations("footer.links");
+  const year = new Date().getFullYear();
   return (
     <footer className="relative overflow-hidden border-t border-surface-border bg-surface-bg">
       {/* Gradient line */}
@@ -72,23 +80,25 @@ export function Footer() {
           <div>
             <div className="mb-4 flex items-baseline gap-2">
               <Heading level="h4" as="h2" className="text-[30px] leading-[36px] tracking-[-0.75px]">
-                Surgery Care
+                {t("brandHeading")}
               </Heading>
               <span className="text-[20px] font-bold uppercase tracking-[1px] text-accent">
-                Promise
+                {t("brandTagline")}
               </span>
             </div>
 
             <Text variant="secondary" className="mb-6 max-w-[391px]">
-              At Surgery Care Foundation, we provide every donation
-              transparently to support life-saving treatment with compassion
-              and trust.
+              {t("brandDescription")}
             </Text>
 
             <div className="mb-6 flex flex-wrap gap-x-3 gap-y-2">
-              {["Registered NGO", "12A", "80G"].map((label) => (
+              {[
+                { key: "registeredNgo", label: tCompliance("registeredNgo") },
+                { key: "12a", label: "12A" },
+                { key: "80g", label: "80G" },
+              ].map(({ key, label }) => (
                 <span
-                  key={label}
+                  key={key}
                   className="inline-flex items-center gap-1.5 rounded-full bg-surface-green px-3 py-1 text-caption font-bold uppercase tracking-[1px] text-accent"
                 >
                   <ShieldCheckIcon className="size-3.5" />
@@ -101,7 +111,7 @@ export function Footer() {
               href="/about"
               className="inline-flex items-center gap-1.5 text-[16px] font-bold text-primary transition-colors hover:text-accent"
             >
-              Read Our Story
+              {t("readOurStory")}
               <ArrowRightIcon className="size-4" />
             </Link>
           </div>
@@ -109,16 +119,16 @@ export function Footer() {
           {/* Quick Links */}
           <div>
             <Heading level="h4" as="h2" className="mb-4 text-[20px] tracking-[0.5px] md:mb-8">
-              Quick Links
+              {t("quickLinks")}
             </Heading>
             <ul className="space-y-4" role="list">
-              {QUICK_LINKS.map(({ href, label }) => (
+              {QUICK_LINKS.map(({ href, key }) => (
                 <li key={href}>
                   <Link
                     href={href}
                     className="text-body-sm text-slate-medium transition-colors hover:text-accent"
                   >
-                    {label}
+                    {tLinks(key)}
                   </Link>
                 </li>
               ))}
@@ -128,7 +138,7 @@ export function Footer() {
           {/* Contact */}
           <div>
             <Heading level="h4" as="h2" className="mb-4 text-[20px] tracking-[0.5px] md:mb-8">
-              Contact Us
+              {t("contactHeading")}
             </Heading>
             <ul className="space-y-5" role="list">
               <li>
@@ -172,7 +182,7 @@ export function Footer() {
         <div className="mt-8 md:mt-12">
           <div className="mb-4 md:mb-8">
             <Heading level="h4" as="h3" className="mb-4 text-[20px] tracking-[0.5px]">
-              Follow Us
+              {t("followUs")}
             </Heading>
             <div className="flex gap-3">
               {SOCIAL_LINKS.map(({ href, label, icon }) => (
@@ -192,10 +202,10 @@ export function Footer() {
 
           <div>
             <Text variant="muted" size="label" className="mb-3 tracking-[1.28px]">
-              Registrations & Compliance
+              {t("registrationsCompliance")}
             </Text>
             <div className="flex flex-wrap gap-3">
-              {COMPLIANCE_BADGES.map(({ label, sub }) => (
+              {COMPLIANCE_BADGES.map(({ label, subKey }) => (
                 <span
                   key={label}
                   className="inline-flex h-12 items-center gap-2 rounded-[10px] border border-surface-subtle bg-white px-3 shadow-card"
@@ -204,7 +214,7 @@ export function Footer() {
                   <span className="flex flex-col leading-tight">
                     <span className="text-[13px] font-bold text-primary">{label}</span>
                     <span className="text-[10px] uppercase tracking-[0.5px] text-slate-light">
-                      {sub}
+                      {tCompliance(subKey)}
                     </span>
                   </span>
                 </span>
@@ -221,18 +231,18 @@ export function Footer() {
             aria-label="Legal"
             className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2"
           >
-            {LEGAL_LINKS.map(({ href, label }) => (
+            {LEGAL_LINKS.map(({ href, key }) => (
               <Link
                 key={href}
                 href={href}
                 className="text-label uppercase tracking-[1.2px] text-slate-light transition-colors hover:text-accent"
               >
-                {label}
+                {tLegal(key)}
               </Link>
             ))}
           </nav>
           <Text variant="muted" size="label" className="tracking-[1.2px] uppercase">
-            &copy; 2025 Surgery Care Foundation. All Rights Reserved.
+            {t("copyright", { year })}
           </Text>
         </Container>
       </div>

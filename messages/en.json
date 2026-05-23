@@ -1,0 +1,61 @@
+{
+  "header": {
+    "nav": {
+      "home": "Home",
+      "about": "About us",
+      "causes": "Causes",
+      "blog": "Blog",
+      "contact": "Contact us"
+    },
+    "needHelp": "Need Help",
+    "donate": "Donate",
+    "login": "Log in",
+    "myAccount": "My Account",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "skipToContent": "Skip to main content"
+  },
+  "hero": {
+    "headingPrefix": "Quality Surgery for",
+    "headingHighlight": "Every Patient",
+    "description": "We connect patients to top hospitals across India for high-quality treatment, and raise funds so that no family has to delay life-saving surgery for cost. Every case is medically verified before it goes live, and your contribution is sent directly to the hospital, never to a personal account.",
+    "donateNow": "Donate Now"
+  },
+  "footer": {
+    "brandHeading": "Surgery Care",
+    "brandTagline": "Promise",
+    "brandDescription": "At Surgery Care Foundation, we provide every donation transparently to support life-saving treatment with compassion and trust.",
+    "readOurStory": "Read Our Story",
+    "quickLinks": "Quick Links",
+    "links": {
+      "about": "About Us",
+      "services": "Services",
+      "blog": "Blog",
+      "contact": "Contact us"
+    },
+    "contactHeading": "Contact Us",
+    "followUs": "Follow Us",
+    "registrationsCompliance": "Registrations & Compliance",
+    "legal": {
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Use",
+      "refund": "Refund Policy",
+      "donation": "Donation Policy",
+      "disclaimer": "Disclaimer",
+      "aml": "AML Policy"
+    },
+    "compliance": {
+      "registeredNgo": "Registered NGO",
+      "donorTaxBenefit": "Donor Tax Benefit",
+      "incomeTaxExempt": "Income Tax Exempt",
+      "registeredNgoLong": "Registered NGO",
+      "govtOfIndia": "Govt of India"
+    },
+    "copyright": "© {year} Surgery Care Foundation. All Rights Reserved."
+  },
+  "language": {
+    "label": "Language",
+    "english": "English",
+    "hindi": "हिन्दी"
+  }
+}

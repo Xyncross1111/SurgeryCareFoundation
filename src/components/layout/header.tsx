@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/auth-context";
 import { Container } from "@/components/ui/container";
@@ -12,13 +13,14 @@ import { Avatar } from "@/components/ui/avatar";
 import { buttonVariants } from "@/components/ui/button";
 import { PhoneIcon, HeartFilledIcon, MenuIcon, CloseIcon } from "@/components/ui/icons";
 import { NotificationBell } from "@/components/layout/notification-bell";
+import { LanguageToggle } from "@/components/layout/language-toggle";
 
 const NAV_ITEMS = [
-  { href: "/", label: "Home" },
-  { href: "/about", label: "About us" },
-  { href: "/causes", label: "Causes" },
-  { href: "/blog", label: "Blog" },
-  { href: "/contact", label: "Contact us" },
+  { href: "/", key: "home" },
+  { href: "/about", key: "about" },
+  { href: "/causes", key: "causes" },
+  { href: "/blog", key: "blog" },
+  { href: "/contact", key: "contact" },
 ] as const;
 
 function getUserInitials(firstName?: string, lastName?: string): string {
@@ -36,6 +38,7 @@ export function Header() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user, isLoading } = useAuth();
+  const t = useTranslations("header");
   const isAuthenticated = Boolean(user);
   const initials = getUserInitials(user?.firstName, user?.lastName);
   const displayName = getUserDisplayName(user?.firstName, user?.lastName);
@@ -53,10 +56,10 @@ export function Header() {
 
           {/* Desktop Nav Links */}
           <ul className="hidden items-center gap-10 lg:flex" role="list">
-            {NAV_ITEMS.map(({ href, label }) => (
+            {NAV_ITEMS.map(({ href, key }) => (
               <li key={href}>
                 <NavLink href={href} active={pathname === href}>
-                  {label}
+                  {t(`nav.${key}`)}
                 </NavLink>
               </li>
             ))}
@@ -67,7 +70,7 @@ export function Header() {
             {/* Phone */}
             <div className="flex flex-col items-end border-r border-surface-border pr-6">
               <span className="text-caption uppercase text-slate-light">
-                Need Help
+                {t("needHelp")}
               </span>
               <a
                 href="tel:+918815935091"
@@ -77,6 +80,9 @@ export function Header() {
                 +91 8815935091
               </a>
             </div>
+
+            {/* Language toggle */}
+            <LanguageToggle />
 
             {/* Donate Button */}
             <Link
@@ -88,7 +94,7 @@ export function Header() {
               })}
             >
               <HeartFilledIcon className="mr-2 size-3.5 text-white" />
-              Donate
+              {t("donate")}
             </Link>
 
             {isAuthenticated && <NotificationBell />}
@@ -104,7 +110,7 @@ export function Header() {
                   size="md"
                 />
                 <div>
-                  <p className="text-caption uppercase text-slate-light">My Account</p>
+                  <p className="text-caption uppercase text-slate-light">{t("myAccount")}</p>
                   <p className="text-btn font-black text-primary">{displayName}</p>
                 </div>
               </Link>
@@ -113,7 +119,7 @@ export function Header() {
                 href="/login"
                 className="text-btn font-bold text-slate-medium transition-colors hover:text-primary"
               >
-                Log in
+                {t("login")}
               </Link>
             )}
           </div>
@@ -124,7 +130,7 @@ export function Header() {
             className="inline-flex items-center justify-center rounded-lg p-2 text-slate transition-colors hover:bg-surface-green lg:hidden"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-expanded={mobileOpen}
-            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            aria-label={mobileOpen ? t("closeMenu") : t("openMenu")}
           >
             {mobileOpen ? (
               <CloseIcon className="size-6" />
@@ -143,7 +149,7 @@ export function Header() {
         >
           <Container className="py-4">
             <ul className="flex flex-col gap-1" role="list">
-              {NAV_ITEMS.map(({ href, label }) => (
+              {NAV_ITEMS.map(({ href, key }) => (
                 <li key={href}>
                   <Link
                     href={href}
@@ -155,11 +161,16 @@ export function Header() {
                     )}
                     onClick={() => setMobileOpen(false)}
                   >
-                    {label}
+                    {t(`nav.${key}`)}
                   </Link>
                 </li>
               ))}
             </ul>
+
+            {/* Language toggle (mobile) */}
+            <div className="mt-4 flex justify-center">
+              <LanguageToggle />
+            </div>
 
             <div className="mt-4 flex flex-col gap-3 border-t border-surface-border pt-4">
               <a
@@ -180,14 +191,14 @@ export function Header() {
                   onClick={() => setMobileOpen(false)}
                 >
                   <HeartFilledIcon className="mr-2 size-3.5 text-white" />
-                  Donate
+                  {t("donate")}
                 </Link>
                 <Link
                   href={isAuthenticated ? "/dashboard/account" : "/login"}
                   className={buttonVariants({ variant: "outline", size: "default", className: "flex-1" })}
                   onClick={() => setMobileOpen(false)}
                 >
-                  {isAuthenticated ? "My Account" : "Log in"}
+                  {isAuthenticated ? t("myAccount") : t("login")}
                 </Link>
               </div>
             </div>

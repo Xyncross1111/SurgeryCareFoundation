@@ -4,7 +4,28 @@ import { createContext, useContext, useState, useEffect, useCallback } from "rea
 import { useRouter } from "next/navigation";
 import { setAccessToken } from "@/lib/api-client";
 import { authService } from "@/services/auth.service";
+import { userService } from "@/services/user.service";
+import { LOCALE_COOKIE, isLocale } from "@/i18n/config";
 import type { User, LoginRequest, RegisterRequest } from "@/types/auth";
+
+async function syncLocaleFromDonorProfile() {
+  try {
+    const profile = await userService.getProfile();
+    const saved = profile.donorProfile?.languagePreference;
+    if (!isLocale(saved)) return;
+    const currentCookie = document.cookie
+      .split(";")
+      .map((s) => s.trim())
+      .find((s) => s.startsWith(`${LOCALE_COOKIE}=`))
+      ?.split("=")[1];
+    if (currentCookie === saved) return;
+    document.cookie = `${LOCALE_COOKIE}=${saved}; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax`;
+    // Force RSC refetch so the user sees their preferred language immediately.
+    if (typeof window !== "undefined") window.location.reload();
+  } catch {
+    // best-effort
+  }
+}
 
 interface AuthContextValue {
   user: User | null;
@@ -34,6 +55,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
       .then((session) => {
         setUser(session);
+        syncLocaleFromDonorProfile();
       })
       .catch(() => {
         setUser(null);
@@ -49,6 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setAccessToken(result.accessToken);
       const session = await authService.getMe();
       setUser(session);
+      syncLocaleFromDonorProfile();
       return session;
     },
     [],
