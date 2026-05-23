@@ -1,541 +1,183 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { Container } from "@/components/ui/container";
-import { Heading } from "@/components/ui/heading";
-import { Text } from "@/components/ui/text";
-import { Badge } from "@/components/ui/badge";
-import { ProgressBar } from "@/components/ui/progress-bar";
-import { buttonVariants } from "@/components/ui/button";
-import { CheckCircleIcon, ShareIcon, HeartFilledIcon } from "@/components/ui/icons";
-import { useApi } from "@/hooks/use-api";
-import { campaignService } from "@/services/campaign.service";
-import { userService, type SavedCauseEntry } from "@/services/user.service";
-import { useAuth } from "@/context/auth-context";
-import { useToast } from "@/components/ui/toast";
-import { formatINR } from "@/lib/format";
+import type { Metadata } from "next";
+import { backendGet } from "@/lib/server-fetch";
+import { absoluteUrl, SITE_NAME, SITE_URL, truncate } from "@/lib/seo";
 import { categoryLabel } from "@/lib/categories";
-import { UrgencyBadge } from "@/components/campaign/urgency-badge";
-import { CoverSlideshow } from "@/components/campaign/cover-slideshow";
-import { QuickDonateBar } from "@/components/campaign/quick-donate-bar";
-import { DonationPrompt } from "@/components/campaign/donation-prompt";
-import {
-  CampaignStory,
-  descriptionHasInlineMedia,
-} from "@/components/campaign/campaign-story";
-import {
-  YouTubeEmbed,
-  extractYouTubeId,
-} from "@/components/campaign/youtube-embed";
-import type { CampaignDocument, CampaignUpdate, CampaignUpdateKind } from "@/types/campaign";
+import type { Campaign } from "@/types/campaign";
+import CauseDetailClient from "./cause-detail-client";
 
-const UPDATE_KIND_STYLE: Record<CampaignUpdateKind, { label: string; pill: string; dot: string }> = {
-  ANNOUNCEMENT: { label: "Announcement", pill: "bg-surface-green text-accent", dot: "bg-accent" },
-  PRE_SURGERY: { label: "Pre-Surgery", pill: "bg-amber-100 text-amber-700", dot: "bg-amber-500" },
-  SURGERY_DONE: { label: "Surgery Done", pill: "bg-emerald-100 text-emerald-700", dot: "bg-emerald-600" },
-  RECOVERY: { label: "Recovery", pill: "bg-sky-100 text-sky-700", dot: "bg-sky-500" },
-  DISCHARGE: { label: "Discharge", pill: "bg-violet-100 text-violet-700", dot: "bg-violet-500" },
-  BILL_POSTED: { label: "Bill Posted", pill: "bg-slate-200 text-slate", dot: "bg-slate" },
-};
+interface PageProps {
+  params: { id: string };
+}
 
-const SIDEBAR_PAYMENT_METHODS = [
-  { src: "/images/pay-amex.png", alt: "American Express", width: 56 },
-  { src: "/images/pay-upi.png", alt: "UPI", width: 32 },
-  { src: "/images/pay-paytm.png", alt: "Paytm", width: 40 },
-  { src: "/images/pay-visa.png", alt: "Visa", width: 42 },
-] as const;
+async function getCampaign(slug: string): Promise<Campaign | null> {
+  return backendGet<Campaign>(`/public/campaigns/${encodeURIComponent(slug)}`, {
+    revalidate: 300,
+  });
+}
 
-export default function CauseDetailPage({ params }: { params: { id: string } }) {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const slug = params.id;
-  const router = useRouter();
-  const { user } = useAuth();
-  const { toast } = useToast();
+  const campaign = await getCampaign(slug);
 
-  const {
-    data: campaign,
-    error: campaignError,
-    isLoading: campaignLoading,
-  } = useApi(() => campaignService.getBySlug(slug), [slug]);
+  if (!campaign) {
+    return {
+      title: "Campaign not found",
+      description: "This medical fundraising campaign is no longer available.",
+      robots: { index: false, follow: false },
+    };
+  }
 
-  const {
-    data: updatesData,
-    error: updatesError,
-    isLoading: updatesLoading,
-  } = useApi(() => campaignService.getUpdates(slug), [slug]);
-
-  const { data: documents } = useApi<CampaignDocument[]>(
-    () => campaignService.getPublicDocuments(slug),
-    [slug],
+  const title = campaign.title;
+  const rawSummary = campaign.summary || campaign.description || "";
+  const description = truncate(
+    rawSummary ||
+      `Help raise funds for ${campaign.title}. Donate to support life-saving medical treatment via Surgery Care Foundation.`,
+    160,
   );
-  const { data: savedCauses, refetch: refetchSavedCauses } = useApi<SavedCauseEntry[]>(
-    () => (user ? userService.getSavedCauses() : Promise.resolve([])),
-    [user?.id],
-  );
-  const [isSaving, setIsSaving] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
+  const url = `${SITE_URL}/causes/${campaign.slug}`;
+  const imageUrl = campaign.coverImageUrl
+    ? absoluteUrl(campaign.coverImageUrl)
+    : `${SITE_URL}/opengraph-image`;
 
-  useEffect(() => {
-    setIsSaved(Boolean(campaign && savedCauses?.some((entry) => entry.campaign.id === campaign.id)));
-  }, [campaign, savedCauses]);
+  return {
+    title,
+    description,
+    alternates: { canonical: `/causes/${campaign.slug}` },
+    openGraph: {
+      type: "article",
+      url,
+      title: `${title} | ${SITE_NAME}`,
+      description,
+      siteName: SITE_NAME,
+      images: [{ url: imageUrl, width: 1200, height: 630, alt: title }],
+      publishedTime: campaign.publishedAt ?? campaign.createdAt,
+      modifiedTime: campaign.updatedAt,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | ${SITE_NAME}`,
+      description,
+      images: [imageUrl],
+    },
+  };
+}
 
-  async function handleShare() {
-    const shareUrl =
-      typeof window !== "undefined" ? window.location.href : `/causes/${slug}`;
-    try {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(shareUrl);
-      } else {
-        // Fallback for older browsers / non-HTTPS contexts where the
-        // Clipboard API is unavailable. execCommand("copy") is
-        // deprecated but it's the only API that works here.
-        const ta = document.createElement("textarea");
-        ta.value = shareUrl;
-        ta.style.position = "fixed";
-        ta.style.opacity = "0";
-        document.body.appendChild(ta);
-        ta.select();
-        // execCommand is deprecated but it's the only API that works
-        // here; cast bypasses the editor's deprecation hint.
-        (document as { execCommand: (c: string) => boolean }).execCommand("copy");
-        document.body.removeChild(ta);
-      }
-      toast("Link copied to clipboard", "success");
-    } catch {
-      toast("Couldn't copy link, please copy from the address bar.", "error");
-      return;
-    }
-    try {
-      await campaignService.recordShare(slug);
-    } catch {
-      // Silently swallow — the user already got their copied link;
-      // a failed counter update isn't worth a second toast.
-    }
+function buildCampaignJsonLd(campaign: Campaign) {
+  const url = `${SITE_URL}/causes/${campaign.slug}`;
+  const goal = Number(campaign.goalAmount ?? 0);
+  const raised = Number(campaign.raisedAmount ?? 0);
+  const condition = campaign.medicalDetails?.diagnosis || campaign.condition || undefined;
+  const treatment = campaign.medicalDetails?.treatmentType;
+
+  const monetaryGrant: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "MonetaryGrant",
+    "@id": url,
+    name: campaign.title,
+    description: truncate(campaign.summary || campaign.description || "", 500),
+    url,
+    funder: {
+      "@type": "NGO",
+      name: SITE_NAME,
+      url: SITE_URL,
+    },
+    amount: {
+      "@type": "MonetaryAmount",
+      currency: campaign.currency || "INR",
+      value: goal,
+    },
+    additionalProperty: [
+      {
+        "@type": "PropertyValue",
+        name: "Amount raised",
+        value: raised,
+        unitText: campaign.currency || "INR",
+      },
+      {
+        "@type": "PropertyValue",
+        name: "Goal amount",
+        value: goal,
+        unitText: campaign.currency || "INR",
+      },
+      {
+        "@type": "PropertyValue",
+        name: "Category",
+        value: categoryLabel(campaign.category),
+      },
+      {
+        "@type": "PropertyValue",
+        name: "Urgency",
+        value: campaign.urgencyLevel,
+      },
+    ],
+    image: campaign.coverImageUrl ? absoluteUrl(campaign.coverImageUrl) : undefined,
+    datePublished: campaign.publishedAt ?? campaign.createdAt,
+    dateModified: campaign.updatedAt,
+  };
+
+  const graph: Array<Record<string, unknown>> = [monetaryGrant];
+
+  if (condition) {
+    graph.push({
+      "@context": "https://schema.org",
+      "@type": "MedicalCondition",
+      name: condition,
+      ...(treatment
+        ? {
+            possibleTreatment: {
+              "@type": "MedicalTherapy",
+              name: treatment,
+            },
+          }
+        : {}),
+    });
   }
 
-  if (campaignLoading) {
-    return (
-      <section className="py-8 md:py-12">
-        <Container>
-          <div className="flex min-h-[400px] items-center justify-center">
-            <Text variant="secondary">Loading campaign details...</Text>
-          </div>
-        </Container>
-      </section>
-    );
-  }
+  graph.push({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: SITE_URL,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Causes",
+        item: `${SITE_URL}/causes`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: campaign.title,
+        item: url,
+      },
+    ],
+  });
 
-  if (campaignError || !campaign) {
-    return (
-      <section className="py-8 md:py-12">
-        <Container>
-          <div className="flex min-h-[400px] flex-col items-center justify-center gap-4">
-            <Heading level="h3">Unable to load campaign</Heading>
-            <Text variant="secondary">
-              {campaignError || "Campaign not found. It may have been removed or the link is incorrect."}
-            </Text>
-            <Link
-              href="/causes"
-              className={buttonVariants({ variant: "outline", size: "default" })}
-            >
-              &larr; Back to Causes
-            </Link>
-          </div>
-        </Container>
-      </section>
-    );
-  }
+  return graph;
+}
 
-  const updates = updatesData ?? [];
-  const backers = campaign._count?.donations || 0;
-
-  async function handleSaveCause() {
-    if (!campaign) return;
-
-    if (!user) {
-      router.push(`/login?redirect=/causes/${slug}`);
-      return;
-    }
-
-    setIsSaving(true);
-    try {
-      if (isSaved) {
-        await userService.removeSavedCause(campaign.id);
-        toast("Cause removed from your saved list.");
-      } else {
-        await userService.saveCause(campaign.id);
-        toast("Cause saved for later.");
-      }
-      refetchSavedCauses();
-    } catch (err) {
-      toast(err instanceof Error ? err.message : "Unable to update saved causes.", "error");
-    } finally {
-      setIsSaving(false);
-    }
-  }
+export default async function CauseDetailPage({ params }: PageProps) {
+  const slug = params.id;
+  const campaign = await getCampaign(slug);
 
   return (
-    <section className="py-8 pb-40 md:py-12 lg:pb-12">
-      <Container>
-        {/* Back link */}
-        <Link
-          href="/causes"
-          className="mb-6 inline-flex items-center gap-1 text-btn font-bold text-slate-medium transition-colors hover:text-primary"
-        >
-          <span aria-hidden="true">&larr;</span> Back to Causes
-        </Link>
-
-        <div className="grid gap-8 lg:grid-cols-5 lg:gap-12">
-          {/* Hero — cover, badges, title */}
-          <div className="lg:col-span-3 lg:col-start-1 lg:row-start-1">
-            <div className="mb-6">
-              <CoverSlideshow
-                slides={(documents ?? []).filter((d) => d.fileType === "patient_image")}
-                fallbackSrc={campaign.coverImageUrl || "/images/placeholder.jpg"}
-                alt={campaign.title}
-              />
-            </div>
-
-            <div className="mb-6 flex flex-wrap items-center gap-3">
-              <Badge variant="accent">{categoryLabel(campaign.category)}</Badge>
-              <UrgencyBadge level={campaign.urgencyLevel} />
-              {campaign.condition && (
-                <Text variant="secondary" className="font-bold">
-                  {campaign.condition}
-                </Text>
-              )}
-            </div>
-
-            <Heading level="h2" as="h1" className="mb-6">
-              {/[.!?]/.test(campaign.title) ? campaign.title : `Help ${campaign.title}`}
-            </Heading>
-          </div>
-
-          {/* Donation Sidebar — second in DOM so it appears between title and
-              story on mobile, while desktop pins it to the right column with
-              row-span-2 sticky behavior. */}
-          <aside className="lg:col-span-2 lg:col-start-4 lg:row-span-2 lg:row-start-1">
-            {/* Sticky card. No max-h or internal scroll — cropping
-                content to fit viewport hid the payments row and the
-                hidden scrollbar gave users no way to discover it.
-                On short viewports the bottom rows can fall below the
-                sticky region, but the primary CTA at the top stays
-                pinned, which is the important part. */}
-            <div className="sticky top-32 mb-6 rounded-2xl border border-surface-border bg-white p-6 shadow-card">
-              <div className="mb-1 flex items-baseline justify-between gap-2">
-                <p className="text-h3 text-primary">
-                  &#8377; {formatINR(campaign.raisedAmount)}
-                </p>
-                <p className="text-btn font-black text-accent">
-                  {(() => {
-                    if (campaign.goalAmount <= 0) return "0% funded";
-                    const pct = (campaign.raisedAmount / campaign.goalAmount) * 100;
-                    // Avoid showing "0% funded" when something has been
-                    // raised but rounding hides it. Anything below 1
-                    // becomes "<1%" so donors see their contribution
-                    // registered even on huge goals.
-                    if (campaign.raisedAmount > 0 && pct < 1) return "<1% funded";
-                    return `${Math.round(pct)}% funded`;
-                  })()}
-                </p>
-              </div>
-              <Text variant="muted" size="label" className="mb-3">
-                Raised of &#8377;{formatINR(campaign.goalAmount)} Goal
-              </Text>
-              <ProgressBar value={campaign.raisedAmount} max={campaign.goalAmount} className="mb-3" />
-
-              <div className="mb-4 flex items-center gap-2">
-                <HeartFilledIcon className="size-4 text-red-500" />
-                <Text variant="secondary">{backers} generous {backers === 1 ? "backer" : "backers"}</Text>
-              </div>
-
-              <Link
-                href={`/causes/${params.id}/checkout`}
-                className={buttonVariants({ variant: "primary", size: "default", className: "mb-3 w-full" })}
-              >
-                Donate Now
-              </Link>
-              <button
-                type="button"
-                onClick={handleShare}
-                className={buttonVariants({ variant: "outline", size: "default", className: "w-full gap-2" })}
-                aria-label="Copy share link to clipboard"
-              >
-                <ShareIcon className="size-4" />
-                Share this cause
-              </button>
-              <button
-                type="button"
-                onClick={handleSaveCause}
-                disabled={isSaving}
-                className={buttonVariants({
-                  variant: "outline",
-                  size: "default",
-                  className: "mt-3 w-full gap-2",
-                })}
-              >
-                <HeartFilledIcon className={`size-4 ${isSaved ? "text-red-500" : "text-slate-light"}`} />
-                {isSaving ? "Updating..." : isSaved ? "Saved for Later" : "Save Cause"}
-              </button>
-
-              <div className="mt-4 space-y-2 border-t border-surface-border pt-4">
-                <div className="flex items-start gap-3">
-                  <CheckCircleIcon className="mt-0.5 size-5 shrink-0 text-accent" />
-                  <Text variant="secondary" className="leading-snug">
-                    Funds are securely processed and sent directly to the partnered medical facility.
-                  </Text>
-                </div>
-                <div className="flex items-start gap-3">
-                  <CheckCircleIcon className="mt-0.5 size-5 shrink-0 text-accent" />
-                  <Text variant="secondary" className="leading-snug">
-                    All cases are 100% verified by our expert medical board.
-                  </Text>
-                </div>
-              </div>
-
-              {/* Payment methods — same set the footer advertises, kept
-                  in sync via the SIDEBAR_PAYMENT_METHODS constant below.
-                  Visible on all viewports so donors see the accepted
-                  methods before tapping Donate. */}
-              <div className="mt-4 border-t border-surface-border pt-4">
-                <Text variant="muted" size="label" className="mb-2 tracking-[1.28px]">
-                  We Accept
-                </Text>
-                <div className="flex flex-wrap gap-1.5">
-                  {SIDEBAR_PAYMENT_METHODS.map(({ src, alt, width }) => (
-                    <span
-                      key={alt}
-                      className="inline-flex h-8 items-center justify-center rounded-md border border-surface-subtle bg-white px-2 opacity-90 shadow-card"
-                    >
-                      <Image
-                        src={src}
-                        alt={alt}
-                        width={width}
-                        height={18}
-                        className="object-contain"
-                      />
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </aside>
-
-          {/* Body — story, media, updates */}
-          <div className="lg:col-span-3 lg:col-start-1 lg:row-start-2">
-            {campaign.videoUrl && extractYouTubeId(campaign.videoUrl) && (
-              <div className="mb-6">
-                <Heading level="h4" as="h2" className="mb-3">
-                  Watch the Story
-                </Heading>
-                <YouTubeEmbed url={campaign.videoUrl} title={campaign.title} />
-              </div>
-            )}
-
-            <div className="space-y-4">
-              {campaign.summary && <Text>{campaign.summary}</Text>}
-              {campaign.description && (
-                <CampaignStory description={campaign.description} />
-              )}
-            </div>
-
-            {/* Patient Photos, Videos & Medical Reports — group by the
-                creator-chosen fileType, not MIME, so a JPEG of a hospital
-                report scan stays in Medical Reports instead of showing
-                up as a "patient photo". */}
-            {documents && documents.length > 0 && (() => {
-              // When the description already weaves images into the story
-              // (markdown ![](...) syntax), we suppress the auto photo and
-              // medical-report galleries so the same images don't appear
-              // twice. Videos still render — they don't fit inline well.
-              const inlineMedia = descriptionHasInlineMedia(campaign.description);
-              const photos = inlineMedia
-                ? []
-                : documents.filter((d) => d.fileType === "patient_image");
-              const videos = documents.filter((d) => d.fileType === "video");
-              const reports = inlineMedia
-                ? []
-                : documents.filter((d) => d.fileType === "medical_document");
-              return (
-                <div className="mt-8 space-y-6">
-                  {photos.length > 0 && (
-                    <div>
-                      <Heading level="h4" as="h2" className="mb-3">Patient Photos</Heading>
-                      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                        {photos.map((img) => (
-                          <a
-                            key={img.id}
-                            href={img.downloadUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="relative block aspect-square overflow-hidden rounded-xl border border-surface-border bg-surface-page transition-transform hover:scale-[1.02]"
-                          >
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                              src={img.downloadUrl}
-                              alt={img.fileName}
-                              className="size-full object-cover"
-                              loading="lazy"
-                            />
-                          </a>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {videos.length > 0 && (
-                    <div>
-                      <Heading level="h4" as="h2" className="mb-3">Patient Videos</Heading>
-                      <div className="grid gap-3 sm:grid-cols-2">
-                        {videos.map((vid) => (
-                          <div
-                            key={vid.id}
-                            className="flex items-center justify-center overflow-hidden rounded-xl border border-surface-border bg-surface-page"
-                          >
-                            <video
-                              src={vid.downloadUrl}
-                              controls
-                              preload="metadata"
-                              className="mx-auto block max-h-[500px] max-w-full"
-                            >
-                              Your browser does not support embedded video.
-                            </video>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {reports.length > 0 && (
-                    <div>
-                      <Heading level="h4" as="h2" className="mb-3">Medical Reports</Heading>
-                      <div className="space-y-4">
-                        {reports.map((doc) => {
-                          const isImage = doc.mimeType?.startsWith("image/");
-                          if (isImage && doc.downloadUrl) {
-                            return (
-                              <a
-                                key={doc.id}
-                                href={doc.downloadUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="block overflow-hidden rounded-xl bg-surface-page"
-                              >
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img
-                                  src={doc.downloadUrl}
-                                  alt=""
-                                  className="w-full object-contain"
-                                  loading="lazy"
-                                />
-                              </a>
-                            );
-                          }
-                          // Non-image report (PDF etc) — fall back to a download card
-                          return (
-                            <a
-                              key={doc.id}
-                              href={doc.downloadUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="block truncate rounded-xl border border-surface-border bg-white px-4 py-3 text-btn font-bold text-primary transition-colors hover:border-accent"
-                            >
-                              {doc.fileName}
-                            </a>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })()}
-
-            {/* Campaign Updates */}
-            {!updatesLoading && !updatesError && updates.length > 0 && (
-              <div className="mt-10">
-                <Heading level="h4" as="h2" className="mb-4">
-                  Updates from the team
-                </Heading>
-                <ol className="relative space-y-5 border-l-2 border-surface-border pl-6">
-                  {updates.map((update: CampaignUpdate) => {
-                    const kindStyle = UPDATE_KIND_STYLE[update.kind] ?? UPDATE_KIND_STYLE.ANNOUNCEMENT;
-                    const isImage = update.attachmentMimeType?.startsWith("image/");
-                    return (
-                      <li key={update.id} className="relative">
-                        <span
-                          aria-hidden="true"
-                          className={`absolute -left-[34px] top-1 size-4 rounded-full border-4 border-white ${kindStyle.dot}`}
-                        />
-                        <div className="rounded-xl border border-surface-border bg-white p-5">
-                          <div className="mb-2 flex flex-wrap items-center gap-2">
-                            <span
-                              className={`inline-flex items-center rounded-full px-2.5 py-1 text-caption font-bold uppercase tracking-[1px] ${kindStyle.pill}`}
-                            >
-                              {kindStyle.label}
-                            </span>
-                            <Text variant="muted" size="label" className="ml-auto">
-                              {new Date(update.createdAt).toLocaleDateString("en-IN", {
-                                day: "numeric",
-                                month: "short",
-                                year: "numeric",
-                              })}
-                            </Text>
-                          </div>
-                          <p className="mb-1 text-btn-lg font-black text-primary">{update.title}</p>
-                          <Text variant="secondary" className="whitespace-pre-line">
-                            {update.content}
-                          </Text>
-                          {update.attachmentUrl && (
-                            <div className="mt-3">
-                              {isImage ? (
-                                <a
-                                  href={update.attachmentUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-block overflow-hidden rounded-lg border border-surface-border"
-                                >
-                                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                                  <img
-                                    src={update.attachmentUrl}
-                                    alt={`Attachment for ${update.title}`}
-                                    className="max-h-72 w-auto object-contain"
-                                  />
-                                </a>
-                              ) : (
-                                <a
-                                  href={update.attachmentUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-2 rounded-full bg-surface-green px-4 py-2 text-btn font-bold text-accent hover:bg-accent hover:text-white"
-                                >
-                                  View attached document
-                                </a>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      </li>
-                    );
-                  })}
-                </ol>
-              </div>
-            )}
-          </div>
-        </div>
-      </Container>
-      <QuickDonateBar slug={slug} />
-      <DonationPrompt
-        slug={slug}
-        patientName={campaign.medicalDetails?.patientName || campaign.title}
-        coverImageUrl={campaign.coverImageUrl}
-        onShare={handleShare}
-        onSave={handleSaveCause}
-        isSaved={isSaved}
-        isSaving={isSaving}
-      />
-    </section>
+    <>
+      {campaign
+        ? buildCampaignJsonLd(campaign).map((node, i) => (
+            <script
+              // eslint-disable-next-line react/no-array-index-key
+              key={i}
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: JSON.stringify(node) }}
+            />
+          ))
+        : null}
+      <CauseDetailClient slug={slug} />
+    </>
   );
 }

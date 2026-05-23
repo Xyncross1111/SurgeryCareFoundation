@@ -1,10 +1,22 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { AuthProvider } from "@/context/auth-context";
 import { ToastProvider } from "@/components/ui/toast";
+import {
+  ORG_CONTACT_EMAIL,
+  ORG_CONTACT_PHONE,
+  ORG_LEGAL_NAME,
+  ORG_LOGO_URL,
+  SITE_DESCRIPTION,
+  SITE_LOCALE,
+  SITE_NAME,
+  SITE_TAGLINE,
+  SITE_URL,
+  TWITTER_HANDLE,
+} from "@/lib/seo";
 import "./globals.css";
 
 const META_PIXEL_ID = "1300869951482266";
@@ -17,9 +29,111 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Surgery Care Foundation",
-  description:
-    "India's Most Trusted Platform for Medical Surgery Funding",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: `${SITE_NAME} — ${SITE_TAGLINE}`,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  keywords: [
+    "medical crowdfunding",
+    "surgery funding India",
+    "donate for surgery",
+    "medical fundraising",
+    "patient surgery donations",
+    "NGO India",
+    "80G donation",
+    "Surgery Care Foundation",
+  ],
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: SITE_LOCALE,
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    title: `${SITE_NAME} — ${SITE_TAGLINE}`,
+    description: SITE_DESCRIPTION,
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: SITE_NAME,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE_NAME} — ${SITE_TAGLINE}`,
+    description: SITE_DESCRIPTION,
+    site: TWITTER_HANDLE,
+    creator: TWITTER_HANDLE,
+    images: ["/opengraph-image"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  icons: {
+    icon: "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/icon.png",
+  },
+  category: "nonprofit",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#0a8a4a",
+};
+
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "NGO",
+  name: ORG_LEGAL_NAME,
+  alternateName: SITE_NAME,
+  url: SITE_URL,
+  logo: ORG_LOGO_URL,
+  description: SITE_DESCRIPTION,
+  contactPoint: {
+    "@type": "ContactPoint",
+    telephone: ORG_CONTACT_PHONE,
+    email: ORG_CONTACT_EMAIL,
+    contactType: "customer support",
+    areaServed: "IN",
+    availableLanguage: ["en", "hi"],
+  },
+  address: {
+    "@type": "PostalAddress",
+    addressCountry: "IN",
+  },
+  sameAs: [],
+};
+
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: SITE_NAME,
+  url: SITE_URL,
+  potentialAction: {
+    "@type": "SearchAction",
+    target: `${SITE_URL}/causes?search={search_term_string}`,
+    "query-input": "required name=search_term_string",
+  },
 };
 
 export default function RootLayout({
@@ -30,6 +144,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
         <Script id="meta-pixel" strategy="afterInteractive">
           {`!function(f,b,e,v,n,t,s)
 {if(f.fbq)return;n=f.fbq=function(){n.callMethod?

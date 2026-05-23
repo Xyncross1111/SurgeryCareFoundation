@@ -1,14 +1,16 @@
+import type { Metadata } from "next";
 import { PageHero } from "@/components/shared/page-hero";
 import { TrustStrip } from "@/components/ui/trust-strip";
 import { Container } from "@/components/ui/container";
+
+export const metadata: Metadata = {
+  title: "Privacy Policy",
+  description:
+    "Read Surgery Care Foundation's privacy policy: how we collect, store, and protect donor and patient information in compliance with Indian data protection regulations.",
+  alternates: { canonical: "/privacy-policy" },
+};
 import { Text } from "@/components/ui/text";
 import { PolicySection, PolicyList, PolicyContact } from "@/components/legal/policy-section";
-
-export const metadata = {
-  title: "Privacy Policy | Surgery Care Foundation",
-  description:
-    "How Surgery Care Foundation collects, uses, stores and shares personal and medical information of donors and patients.",
-};
 
 export default function PrivacyPolicyPage() {
   return (

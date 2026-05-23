@@ -1,5 +1,13 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import { PageHero } from "@/components/shared/page-hero";
+
+export const metadata: Metadata = {
+  title: "About Us",
+  description:
+    "Learn about Surgery Care Foundation — our mission, board of trustees, and partner hospitals working together to fund life-saving surgeries for patients across India.",
+  alternates: { canonical: "/about" },
+};
 import { Container } from "@/components/ui/container";
 import { Heading } from "@/components/ui/heading";
 import { Text } from "@/components/ui/text";

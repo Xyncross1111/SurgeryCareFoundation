@@ -1,14 +1,16 @@
+import type { Metadata } from "next";
 import { PageHero } from "@/components/shared/page-hero";
 import { TrustStrip } from "@/components/ui/trust-strip";
 import { Container } from "@/components/ui/container";
+
+export const metadata: Metadata = {
+  title: "Donation Policy",
+  description:
+    "How donations are accepted, processed, and used at Surgery Care Foundation, including 80G tax benefits, recurring donations, and donor rights.",
+  alternates: { canonical: "/donation-policy" },
+};
 import { Text } from "@/components/ui/text";
 import { PolicySection, PolicyList, PolicyContact } from "@/components/legal/policy-section";
-
-export const metadata = {
-  title: "Donation Policy | Surgery Care Foundation",
-  description:
-    "How donations to Surgery Care Foundation are accepted, attributed to patients, disbursed to hospitals and acknowledged.",
-};
 
 export default function DonationPolicyPage() {
   return (

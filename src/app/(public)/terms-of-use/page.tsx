@@ -1,14 +1,16 @@
+import type { Metadata } from "next";
 import { PageHero } from "@/components/shared/page-hero";
 import { TrustStrip } from "@/components/ui/trust-strip";
 import { Container } from "@/components/ui/container";
+
+export const metadata: Metadata = {
+  title: "Terms of Use",
+  description:
+    "Terms of use for the Surgery Care Foundation platform: rules governing donor accounts, campaign creation, payments, and use of our services.",
+  alternates: { canonical: "/terms-of-use" },
+};
 import { Text } from "@/components/ui/text";
 import { PolicySection, PolicyList, PolicyContact } from "@/components/legal/policy-section";
-
-export const metadata = {
-  title: "Terms of Use | Surgery Care Foundation",
-  description:
-    "Terms governing the use of Surgery Care Foundation's website, donations, and patient campaigns.",
-};
 
 export default function TermsOfUsePage() {
   return (

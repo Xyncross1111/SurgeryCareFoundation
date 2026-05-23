@@ -1,14 +1,16 @@
+import type { Metadata } from "next";
 import { PageHero } from "@/components/shared/page-hero";
 import { TrustStrip } from "@/components/ui/trust-strip";
 import { Container } from "@/components/ui/container";
+
+export const metadata: Metadata = {
+  title: "Disclaimer",
+  description:
+    "Disclaimer for the Surgery Care Foundation platform: limits of liability, medical-information disclaimers, and donor responsibilities.",
+  alternates: { canonical: "/disclaimer" },
+};
 import { Text } from "@/components/ui/text";
 import { PolicySection, PolicyContact } from "@/components/legal/policy-section";
-
-export const metadata = {
-  title: "Disclaimer | Surgery Care Foundation",
-  description:
-    "Important disclosures about Surgery Care Foundation's role, the medical content on this site, tax benefits and third-party services.",
-};
 
 export default function DisclaimerPage() {
   return (

@@ -1,14 +1,16 @@
+import type { Metadata } from "next";
 import { PageHero } from "@/components/shared/page-hero";
 import { TrustStrip } from "@/components/ui/trust-strip";
 import { Container } from "@/components/ui/container";
+
+export const metadata: Metadata = {
+  title: "Refund Policy",
+  description:
+    "Surgery Care Foundation refund policy: when refunds apply to donations made via our platform and how to request one.",
+  alternates: { canonical: "/refund-policy" },
+};
 import { Text } from "@/components/ui/text";
 import { PolicySection, PolicyList, PolicyContact } from "@/components/legal/policy-section";
-
-export const metadata = {
-  title: "Refund & Cancellation Policy | Surgery Care Foundation",
-  description:
-    "When and how Surgery Care Foundation processes refunds for donations to medical surgery campaigns.",
-};
 
 export default function RefundPolicyPage() {
   return (

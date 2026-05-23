@@ -1,98 +1,109 @@
-"use client";
+import type { Metadata } from "next";
+import { backendGet } from "@/lib/server-fetch";
+import { absoluteUrl, ORG_LOGO_URL, SITE_NAME, SITE_URL, truncate } from "@/lib/seo";
+import type { BlogPost } from "@/types/content";
+import BlogDetailClient from "./blog-detail-client";
 
-import Image from "next/image";
-import Link from "next/link";
-import { PageHero } from "@/components/shared/page-hero";
-import { TrustStrip } from "@/components/ui/trust-strip";
-import { Container } from "@/components/ui/container";
-import { Text } from "@/components/ui/text";
-import { Badge } from "@/components/ui/badge";
-import { CalendarIcon, ArrowRightIcon } from "@/components/ui/icons";
-import { useApi } from "@/hooks/use-api";
-import { publicService } from "@/services/public.service";
+interface PageProps {
+  params: { slug: string };
+}
 
-export default function BlogDetailPage({ params }: { params: { slug: string } }) {
-  const { data: post, isLoading, error } = useApi(
-    () => publicService.getBlogPost(params.slug),
-    [params.slug],
-  );
+async function getPost(slug: string): Promise<BlogPost | null> {
+  return backendGet<BlogPost>(`/public/blog-posts/${encodeURIComponent(slug)}`, {
+    revalidate: 600,
+  });
+}
 
-  if (isLoading) {
-    return (
-      <section className="py-20">
-        <Container>
-          <Text variant="secondary">Loading article...</Text>
-        </Container>
-      </section>
-    );
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const post = await getPost(params.slug);
+
+  if (!post) {
+    return {
+      title: "Article not found",
+      robots: { index: false, follow: false },
+    };
   }
 
-  if (!post || error) {
-    return (
-      <section className="py-20">
-        <Container className="max-w-3xl">
-          <Text variant="secondary">{error || "Blog post not found."}</Text>
-        </Container>
-      </section>
-    );
-  }
+  const description = truncate(post.excerpt || post.content || "", 160);
+  const url = `${SITE_URL}/blog/${post.slug}`;
+  const imageUrl = post.coverImageUrl
+    ? absoluteUrl(post.coverImageUrl)
+    : `${SITE_URL}/opengraph-image`;
 
+  return {
+    title: post.title,
+    description,
+    alternates: { canonical: `/blog/${post.slug}` },
+    openGraph: {
+      type: "article",
+      url,
+      title: `${post.title} | ${SITE_NAME}`,
+      description,
+      siteName: SITE_NAME,
+      images: [{ url: imageUrl, width: 1200, height: 630, alt: post.title }],
+      publishedTime: post.publishedAt ?? post.createdAt,
+      modifiedTime: post.updatedAt,
+      authors: post.authorName ? [post.authorName] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${post.title} | ${SITE_NAME}`,
+      description,
+      images: [imageUrl],
+    },
+  };
+}
+
+function buildArticleJsonLd(post: BlogPost) {
+  const url = `${SITE_URL}/blog/${post.slug}`;
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: post.title,
+      description: truncate(post.excerpt || post.content || "", 300),
+      mainEntityOfPage: { "@type": "WebPage", "@id": url },
+      url,
+      image: post.coverImageUrl ? absoluteUrl(post.coverImageUrl) : `${SITE_URL}/opengraph-image`,
+      datePublished: post.publishedAt ?? post.createdAt,
+      dateModified: post.updatedAt,
+      author: post.authorName
+        ? { "@type": "Person", name: post.authorName }
+        : { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+      publisher: {
+        "@type": "Organization",
+        name: SITE_NAME,
+        logo: { "@type": "ImageObject", url: ORG_LOGO_URL },
+      },
+      articleSection: post.category ?? undefined,
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+        { "@type": "ListItem", position: 2, name: "Blog", item: `${SITE_URL}/blog` },
+        { "@type": "ListItem", position: 3, name: post.title, item: url },
+      ],
+    },
+  ];
+}
+
+export default async function BlogDetailPage({ params }: PageProps) {
+  const post = await getPost(params.slug);
   return (
     <>
-      <PageHero title={post.title} subtitle={post.excerpt} />
-      <TrustStrip />
-
-      <article className="py-16 md:py-24">
-        <Container className="max-w-3xl">
-          <div className="mb-8 flex flex-wrap items-center gap-4">
-            {post.category && <Badge>{post.category}</Badge>}
-            <div className="flex items-center gap-2 text-slate-light">
-              <CalendarIcon className="size-4" />
-              <Text as="span" variant="muted" size="label" className="normal-case tracking-normal">
-                {new Date(post.publishedAt || post.createdAt).toLocaleDateString("en-IN", {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                })}
-              </Text>
-            </div>
-            {post.authorName && (
-              <Text as="span" variant="muted" size="label" className="normal-case tracking-normal">
-                By {post.authorName}
-              </Text>
-            )}
-          </div>
-
-          <div className="relative mb-10 h-64 overflow-hidden rounded-2xl md:h-96">
-            <Image
-              src={post.coverImageUrl || "/images/placeholder.jpg"}
-              alt={post.title}
-              fill
-              className="object-cover"
-              sizes="(min-width: 768px) 768px, 100vw"
-              priority
+      {post
+        ? buildArticleJsonLd(post).map((node, i) => (
+            <script
+              // eslint-disable-next-line react/no-array-index-key
+              key={i}
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: JSON.stringify(node) }}
             />
-          </div>
-
-          <div className="max-w-none">
-            {post.content.split("\n\n").map((paragraph, index) => (
-              <Text key={index} variant="secondary" size="body-lg" className="mb-6">
-                {paragraph}
-              </Text>
-            ))}
-          </div>
-
-          <div className="mt-12 border-t border-surface-border pt-8">
-            <Link
-              href="/blog"
-              className="inline-flex items-center gap-2 text-btn font-bold text-primary transition-colors hover:text-accent"
-            >
-              <ArrowRightIcon className="size-4 rotate-180" />
-              Back to All Articles
-            </Link>
-          </div>
-        </Container>
-      </article>
+          ))
+        : null}
+      <BlogDetailClient slug={params.slug} />
     </>
   );
 }

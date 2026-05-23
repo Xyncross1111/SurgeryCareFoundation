@@ -1,14 +1,16 @@
+import type { Metadata } from "next";
 import { PageHero } from "@/components/shared/page-hero";
 import { TrustStrip } from "@/components/ui/trust-strip";
 import { Container } from "@/components/ui/container";
+
+export const metadata: Metadata = {
+  title: "AML Policy",
+  description:
+    "Anti-Money Laundering policy of Surgery Care Foundation: due-diligence, donor identification, and reporting practices we follow to keep the platform safe.",
+  alternates: { canonical: "/aml-policy" },
+};
 import { Text } from "@/components/ui/text";
 import { PolicySection, PolicyList, PolicyContact } from "@/components/legal/policy-section";
-
-export const metadata = {
-  title: "Anti-Money Laundering Policy | Surgery Care Foundation",
-  description:
-    "How Surgery Care Foundation prevents the misuse of charitable donations under the Prevention of Money Laundering Act and related Indian regulations.",
-};
 
 export default function AmlPolicyPage() {
   return (
