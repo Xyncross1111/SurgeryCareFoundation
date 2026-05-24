@@ -350,20 +350,17 @@ export default function CauseDetailClient({ slug }: { slug: string }) {
             {documents && documents.length > 0 && (() => {
               // When the description already weaves images into the story
               // (markdown ![](...) syntax), we suppress the auto photo
-              // gallery and image-only medical reports so the same images
-              // don't appear twice. Non-image reports (PDFs etc) always
-              // render — markdown can't embed them inline. Videos always
-              // render too — they don't fit inline well.
+              // gallery so the same patient photos don't appear twice.
+              // Medical Documents always render in the auto gallery
+              // regardless of inlineMedia — Zoya's image report and
+              // Shivani's PDF should both show up below Patient Videos.
+              // Videos always render too — they don't fit inline well.
               const inlineMedia = descriptionHasInlineMedia(campaign.description);
               const photos = inlineMedia
                 ? []
                 : documents.filter((d) => d.fileType === "patient_image");
               const videos = documents.filter((d) => d.fileType === "video");
-              const reports = documents.filter((d) => {
-                if (d.fileType !== "medical_document") return false;
-                if (!inlineMedia) return true;
-                return !d.mimeType?.startsWith("image/");
-              });
+              const reports = documents.filter((d) => d.fileType === "medical_document");
               return (
                 <div className="mt-8 space-y-6">
                   {photos.length > 0 && (
