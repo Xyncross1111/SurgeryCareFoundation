@@ -349,21 +349,17 @@ export default function CauseDetailClient({ slug }: { slug: string }) {
                 up as a "patient photo". */}
             {documents && documents.length > 0 && (() => {
               // When the description already weaves images into the story
-              // (markdown ![](...) syntax), we suppress the auto photo
-              // gallery and image-only medical reports so the same images
-              // don't appear twice. Non-image reports (PDFs etc) always
-              // render — markdown can't embed them inline. Videos always
-              // render too — they don't fit inline well.
+              // (markdown ![](...) syntax), suppress the auto photo
+              // gallery so the same patient photos don't appear twice.
+              // Videos and Medical Documents always render below the
+              // story so the page flow is identical across campaigns:
+              // story → patient videos → medical documents.
               const inlineMedia = descriptionHasInlineMedia(campaign.description);
               const photos = inlineMedia
                 ? []
                 : documents.filter((d) => d.fileType === "patient_image");
               const videos = documents.filter((d) => d.fileType === "video");
-              const reports = documents.filter((d) => {
-                if (d.fileType !== "medical_document") return false;
-                if (!inlineMedia) return true;
-                return !d.mimeType?.startsWith("image/");
-              });
+              const reports = documents.filter((d) => d.fileType === "medical_document");
               return (
                 <div className="mt-8 space-y-6">
                   {photos.length > 0 && (
