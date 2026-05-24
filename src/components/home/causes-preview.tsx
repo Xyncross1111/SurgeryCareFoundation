@@ -18,6 +18,7 @@ import type { Campaign } from "@/types/campaign";
 
 function CauseCard({ cause }: { cause: Campaign }) {
   const t = useTranslations("causesPreview");
+  const tCategories = useTranslations("categories");
   // "<1%" instead of "0%" when something has been raised but rounding
   // hides it (e.g. ₹20 of a ₹15L goal). Matches the cause listing card.
   const percentageLabel = (() => {
@@ -30,14 +31,11 @@ function CauseCard({ cause }: { cause: Campaign }) {
   return (
     <Link
       href={`/causes/${cause.slug}`}
-      className="block transition-transform hover:-translate-y-1"
+      className="group block rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
     >
-    <Card className="h-full overflow-hidden">
-      {/* Image with overlay */}
-      <div className="relative h-56 overflow-hidden bg-surface-page">
-        {/* Blurred backdrop fills the dead space around
-            portrait/landscape mismatches so the actual cover
-            can stay object-contain (never clipped). */}
+    <Card className="flex h-full flex-col overflow-hidden transition-transform group-hover:-translate-y-1">
+      {/* Cover — blurred backdrop + object-contain hero, badges pinned at top */}
+      <div className="relative aspect-[4/3] overflow-hidden bg-surface-page">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={cause.coverImageUrl || "/images/placeholder.jpg"}
@@ -45,69 +43,75 @@ function CauseCard({ cause }: { cause: Campaign }) {
           aria-hidden
           className="absolute inset-0 size-full scale-110 object-cover blur-2xl"
         />
+        <div className="absolute inset-0 bg-black/15" />
         <Image
           src={cause.coverImageUrl || "/images/placeholder.jpg"}
           alt={cause.title}
           fill
-          className="object-contain"
+          className="relative object-contain"
           sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
         />
-
-        {/* Urgency badge — top-right so it's the first thing the eye
-            catches even before the cover finishes loading. */}
-        <div className="absolute right-3 top-3 z-10">
-          <UrgencyBadge level={cause.urgencyLevel} className="shadow-sm" />
-        </div>
-
-        {/* Name & category overlay */}
-        <div className="absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black/60 to-transparent p-4 pt-12">
-          <p className="text-lg font-black text-white">{cause.title}</p>
-          {cause.category && cause.category !== "other" && (
-            <Badge variant="accent" className="mt-1 text-caption">
-              {cause.category}
+        <div className="absolute left-3 right-3 top-3 z-10 flex items-center justify-between gap-2">
+          {cause.category && cause.category !== "other" ? (
+            <Badge variant="accent" className="text-caption shadow-sm">
+              {tCategories(cause.category)}
             </Badge>
+          ) : (
+            <span aria-hidden="true" />
           )}
+          <UrgencyBadge level={cause.urgencyLevel} className="shadow-sm" />
         </div>
       </div>
 
-      <CardContent>
-        <Text variant="secondary" className="mb-4 line-clamp-2">
-          {cause.summary}
-        </Text>
-
-        {/* Stats row */}
-        <div className="mb-1 flex items-baseline justify-between">
-          <p className="text-btn font-black text-primary">
-            &#8377; {formatINR(cause.raisedAmount)}
-          </p>
-          <p className="text-btn font-black text-primary">
-            {cause._count?.donations ?? 0}
-          </p>
-        </div>
-        <div className="mb-3 flex justify-between">
-          <Text as="span" variant="muted" size="label">{t("raised")}</Text>
-          <Text as="span" variant="muted" size="label">{t("backers")}</Text>
-        </div>
-
-        {/* Progress */}
-        <div className="mb-1 flex justify-between">
-          <Text as="span" variant="muted" size="label">
-            {t("goalPrefix", { amount: formatINR(cause.goalAmount) })}
+      <CardContent className="flex flex-1 flex-col p-5">
+        <h3 className="mb-1 line-clamp-2 text-btn font-black text-primary transition-colors group-hover:text-accent">
+          {cause.title}
+        </h3>
+        {cause.condition && (
+          <Text variant="muted" size="label" className="mb-3 normal-case tracking-normal line-clamp-1">
+            {cause.condition}
           </Text>
-          <Text as="span" variant="muted" size="label">{percentageLabel}</Text>
-        </div>
-        <ProgressBar value={cause.raisedAmount} max={cause.goalAmount} className="mb-4" />
+        )}
+        {cause.summary && (
+          <Text variant="secondary" size="body" className="mb-4 line-clamp-2">
+            {cause.summary}
+          </Text>
+        )}
 
-        {/* CTA */}
-        <span
-          className={buttonVariants({
-            variant: "outline",
-            size: "default",
-            className: "w-full",
-          })}
-        >
-          {t("donateNow")}
-        </span>
+        {/* Progress — pinned to the bottom so cards stay aligned regardless
+            of title/summary length. */}
+        <div className="mt-auto">
+          <div className="mb-1 flex items-baseline justify-between">
+            <p className="text-btn font-black text-primary">
+              &#8377; {formatINR(cause.raisedAmount)}
+            </p>
+            <p className="text-btn font-black text-primary">
+              {cause._count?.donations ?? 0}
+            </p>
+          </div>
+          <div className="mb-3 flex justify-between">
+            <Text as="span" variant="muted" size="label">{t("raised")}</Text>
+            <Text as="span" variant="muted" size="label">{t("backers")}</Text>
+          </div>
+
+          <div className="mb-1 flex justify-between">
+            <Text as="span" variant="muted" size="label">
+              {t("goalPrefix", { amount: formatINR(cause.goalAmount) })}
+            </Text>
+            <Text as="span" variant="muted" size="label">{percentageLabel}</Text>
+          </div>
+          <ProgressBar value={cause.raisedAmount} max={cause.goalAmount} className="mb-4" />
+
+          <span
+            className={buttonVariants({
+              variant: "outline",
+              size: "default",
+              className: "w-full",
+            })}
+          >
+            {t("donateNow")}
+          </span>
+        </div>
       </CardContent>
     </Card>
     </Link>

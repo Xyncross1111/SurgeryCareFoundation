@@ -349,17 +349,21 @@ export default function CauseDetailClient({ slug }: { slug: string }) {
                 up as a "patient photo". */}
             {documents && documents.length > 0 && (() => {
               // When the description already weaves images into the story
-              // (markdown ![](...) syntax), we suppress the auto photo and
-              // medical-report galleries so the same images don't appear
-              // twice. Videos still render — they don't fit inline well.
+              // (markdown ![](...) syntax), we suppress the auto photo
+              // gallery and image-only medical reports so the same images
+              // don't appear twice. Non-image reports (PDFs etc) always
+              // render — markdown can't embed them inline. Videos always
+              // render too — they don't fit inline well.
               const inlineMedia = descriptionHasInlineMedia(campaign.description);
               const photos = inlineMedia
                 ? []
                 : documents.filter((d) => d.fileType === "patient_image");
               const videos = documents.filter((d) => d.fileType === "video");
-              const reports = inlineMedia
-                ? []
-                : documents.filter((d) => d.fileType === "medical_document");
+              const reports = documents.filter((d) => {
+                if (d.fileType !== "medical_document") return false;
+                if (!inlineMedia) return true;
+                return !d.mimeType?.startsWith("image/");
+              });
               return (
                 <div className="mt-8 space-y-6">
                   {photos.length > 0 && (
@@ -435,17 +439,28 @@ export default function CauseDetailClient({ slug }: { slug: string }) {
                               </a>
                             );
                           }
-                          // Non-image report (PDF etc) — fall back to a download card
+                          // Non-image report (typically PDF) — embed via
+                          // iframe so the page is self-contained instead
+                          // of forcing donors to download to read.
                           return (
-                            <a
+                            <div
                               key={doc.id}
-                              href={doc.downloadUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="block truncate rounded-xl border border-surface-border bg-white px-4 py-3 text-btn font-bold text-primary transition-colors hover:border-accent"
+                              className="overflow-hidden rounded-xl border border-surface-border bg-surface-page"
                             >
-                              {doc.fileName}
-                            </a>
+                              <iframe
+                                src={doc.downloadUrl}
+                                title={doc.fileName}
+                                className="block h-[600px] w-full"
+                              />
+                              <a
+                                href={doc.downloadUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block truncate border-t border-surface-border bg-white px-4 py-2 text-label font-bold uppercase tracking-[1.2px] text-accent transition-colors hover:bg-surface-green"
+                              >
+                                Open in new tab — {doc.fileName}
+                              </a>
+                            </div>
                           );
                         })}
                       </div>
