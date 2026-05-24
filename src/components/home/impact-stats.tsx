@@ -7,23 +7,32 @@ import { ProgressBar } from "@/components/ui/progress-bar";
 import { useApi } from "@/hooks/use-api";
 import { publicService } from "@/services/public.service";
 import { formatINR } from "@/lib/format";
+import type { SiteStats } from "@/types/content";
 
-export function ImpactStats() {
-  const { data: stats, isLoading } = useApi(() => publicService.getStats(), []);
+interface ImpactStatsProps {
+  initialStats?: SiteStats;
+}
+
+export function ImpactStats({ initialStats }: ImpactStatsProps = {}) {
+  const { data: liveStats } = useApi(() => publicService.getStats(), []);
+  const stats = liveStats ?? initialStats ?? null;
 
   const totalRaised = stats?.totalRaised ?? 0;
   const totalGoal = stats?.totalGoal ?? 0;
-  const raisedDisplay = isLoading ? "\u2014" : `\u20B9 ${formatINR(totalRaised)}`;
-  const goalDisplay = isLoading ? "\u2014" : `\u20B9 ${formatINR(totalGoal)}`;
+  const raisedDisplay = `\u20B9 ${formatINR(totalRaised)}`;
+  const goalDisplay = `\u20B9 ${formatINR(totalGoal)}`;
   // Same "<1%" rule as cause cards: if money has come in but the
   // ratio rounds to zero, show "<1% funded" so donors don't think the
   // counter is broken.
   const fundedLabel = (() => {
-    if (isLoading || totalGoal <= 0) return "\u2014";
+    if (totalGoal <= 0) return "0% funded";
     const raw = (totalRaised / totalGoal) * 100;
     if (totalRaised > 0 && raw < 1) return "<1% funded";
     return `${Math.min(100, Math.round(raw))}% funded`;
   })();
+  const currentYear = new Date().getFullYear();
+  const donorsCount = stats?.totalDonors ?? 0;
+  const campaignsCount = stats?.totalCampaigns ?? 0;
 
   return (
     <section className="relative -mt-16 z-10 pb-8">
@@ -64,35 +73,33 @@ export function ImpactStats() {
               <p className="text-btn font-black text-accent">{fundedLabel}</p>
             </div>
             <ProgressBar
-              value={isLoading ? 0 : totalRaised}
+              value={totalRaised}
               max={totalGoal || 1}
               className="mt-2"
             />
 
             {/* Secondary stats */}
-            {!isLoading && stats && (
-              <div className="mt-6 flex gap-8">
-                <div>
-                  <p className="text-lg font-black text-primary">{stats.totalDonors.toLocaleString("en-IN")}</p>
-                  <Text as="span" variant="muted" size="label" className="uppercase tracking-[1.2px] text-slate-medium">
-                    Donors
-                  </Text>
-                </div>
-                <div>
-                  <p className="text-lg font-black text-primary">{stats.totalCampaigns}</p>
-                  <Text as="span" variant="muted" size="label" className="uppercase tracking-[1.2px] text-slate-medium">
-                    Campaigns
-                  </Text>
-                </div>
+            <div className="mt-6 flex gap-8">
+              <div>
+                <p className="text-lg font-black text-primary">{donorsCount.toLocaleString("en-IN")}</p>
+                <Text as="span" variant="muted" size="label" className="uppercase tracking-[1.2px] text-slate-medium">
+                  Donors
+                </Text>
               </div>
-            )}
+              <div>
+                <p className="text-lg font-black text-primary">{campaignsCount}</p>
+                <Text as="span" variant="muted" size="label" className="uppercase tracking-[1.2px] text-slate-medium">
+                  Campaigns
+                </Text>
+              </div>
+            </div>
           </div>
 
           {/* Right — How Your Support Helps */}
           <div className="border-t border-surface-border pt-6 md:border-t-0 md:pl-10 md:pt-0">
             <div className="mb-3 flex gap-3">
               <span className="rounded-full bg-primary px-3 py-1 text-[11.2px] font-bold uppercase tracking-[0.56px] text-white">
-                Year 2025
+                Year {currentYear}
               </span>
               <span className="rounded-full bg-surface-green px-3 py-1 text-[11.2px] font-bold uppercase tracking-[0.56px] text-accent">
                 Healthcare

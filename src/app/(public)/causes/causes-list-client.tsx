@@ -68,14 +68,16 @@ export default function CausesListClient() {
               Browse every live fundraiser, track progress, and open a campaign to donate directly.
             </Text>
           </div>
-          <div className="rounded-2xl border border-surface-border bg-white px-5 py-4 shadow-card">
-            <Text size="label" variant="muted" className="mb-1">
-              Showing
-            </Text>
-            <p className="text-h5 font-black text-primary">
-              {data?.total ?? campaigns.length} campaign{(data?.total ?? campaigns.length) === 1 ? "" : "s"}
-            </p>
-          </div>
+          {(data?.total ?? campaigns.length) > 0 && (
+            <div className="rounded-2xl border border-surface-border bg-white px-5 py-4 shadow-card">
+              <Text size="label" variant="muted" className="mb-1">
+                Showing
+              </Text>
+              <p className="text-h5 font-black text-primary">
+                {data?.total ?? campaigns.length} campaign{(data?.total ?? campaigns.length) === 1 ? "" : "s"}
+              </p>
+            </div>
+          )}
         </div>
 
         <div className="mb-10 flex flex-wrap gap-2">
@@ -121,8 +123,25 @@ export default function CausesListClient() {
         )}
 
         {!isLoading && !error && campaigns.length === 0 && (
-          <div className="flex justify-center py-16">
-            <Text variant="secondary">No campaigns found.</Text>
+          <div className="flex flex-col items-center justify-center gap-6 py-16 text-center">
+            <div className="max-w-md">
+              <Heading level="h4" as="h2" className="mb-2 text-primary">
+                No active campaigns right now
+              </Heading>
+              <Text variant="secondary" size="body-lg">
+                {activeFilter
+                  ? "Try a different category, or check back soon. New verified cases are added regularly."
+                  : "New verified cases are added regularly. In the meantime, you can still support our mission by donating to the foundation."}
+              </Text>
+            </div>
+            {!activeFilter && (
+              <Link
+                href="/contact"
+                className={buttonVariants({ variant: "secondary", size: "lg" })}
+              >
+                Donate to the Foundation
+              </Link>
+            )}
           </div>
         )}
 

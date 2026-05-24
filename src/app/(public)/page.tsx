@@ -7,17 +7,28 @@ import { StatsBar } from "@/components/home/stats-bar";
 import { Testimonials } from "@/components/home/testimonials";
 import { FaqSection } from "@/components/home/faq-section";
 import { TrustStrip } from "@/components/ui/trust-strip";
+import { backendGet } from "@/lib/server-fetch";
+import type { SiteStats } from "@/types/content";
 
-export default function Home() {
+const ZERO_STATS: SiteStats = {
+  totalRaised: 0,
+  totalGoal: 0,
+  totalDonors: 0,
+  totalCampaigns: 0,
+};
+
+export default async function Home() {
+  const stats = (await backendGet<SiteStats>("/public/stats", { revalidate: 60 })) ?? ZERO_STATS;
+
   return (
     <>
       <HeroSection />
-      <ImpactStats />
+      <ImpactStats initialStats={stats} />
       <TrustStrip />
       <CausesPreview />
       <MissionSection />
       <VolunteerTeam />
-      <StatsBar />
+      <StatsBar initialStats={stats} />
       <Testimonials />
       <FaqSection />
     </>

@@ -4,18 +4,19 @@ import { Container } from "@/components/ui/container";
 import { useApi } from "@/hooks/use-api";
 import { publicService } from "@/services/public.service";
 import { formatINR } from "@/lib/format";
+import type { SiteStats } from "@/types/content";
 
-export function StatsBar() {
-  const { data: stats, isLoading } = useApi(() => publicService.getStats(), []);
-  const raisedValue = !isLoading && stats
-    ? `\u20B9 ${formatINR(stats.totalRaised)}`
-    : "\u2014";
-  const donationsValue = !isLoading && stats
-    ? stats.totalDonors.toLocaleString("en-IN")
-    : "\u2014";
-  const activeCausesValue = !isLoading && stats
-    ? String(stats.totalCampaigns)
-    : "\u2014";
+interface StatsBarProps {
+  initialStats?: SiteStats;
+}
+
+export function StatsBar({ initialStats }: StatsBarProps = {}) {
+  const { data: liveStats } = useApi(() => publicService.getStats(), []);
+  const stats = liveStats ?? initialStats ?? null;
+
+  const raisedValue = `₹ ${formatINR(stats?.totalRaised ?? 0)}`;
+  const donationsValue = (stats?.totalDonors ?? 0).toLocaleString("en-IN");
+  const activeCausesValue = String(stats?.totalCampaigns ?? 0);
 
   const items = [
     { value: "85", label: "Volunteers" },

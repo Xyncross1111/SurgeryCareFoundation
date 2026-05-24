@@ -4,9 +4,9 @@ import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
 import { AuthProvider } from "@/context/auth-context";
 import { ToastProvider } from "@/components/ui/toast";
-import { getServerLocale, getMessagesForLocale } from "@/i18n/get-locale";
 import {
   ORG_CONTACT_EMAIL,
   ORG_CONTACT_PHONE,
@@ -143,8 +143,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const locale = getServerLocale();
-  const messages = await getMessagesForLocale(locale);
+  const locale = await getLocale();
+  const messages = await getMessages();
 
   return (
     <html lang={locale}>
