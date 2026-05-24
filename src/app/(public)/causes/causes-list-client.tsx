@@ -188,9 +188,15 @@ export default function CausesListClient() {
                         sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
                       />
                       <div className="absolute left-3 right-3 top-3 z-10 flex items-center justify-between gap-2">
-                        <Badge variant="accent" className="text-caption shadow-sm">
-                          {tCategories(campaign.category ?? "other")}
-                        </Badge>
+                        {campaign.category && campaign.category !== "other" ? (
+                          <Badge variant="accent" className="text-caption shadow-sm">
+                            {tCategories(campaign.category)}
+                          </Badge>
+                        ) : (
+                          // Empty placeholder so the urgency badge stays
+                          // pinned to the right under justify-between.
+                          <span aria-hidden="true" />
+                        )}
                         <UrgencyBadge level={campaign.urgencyLevel} className="shadow-sm" />
                       </div>
                     </div>

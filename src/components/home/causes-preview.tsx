@@ -62,9 +62,11 @@ function CauseCard({ cause }: { cause: Campaign }) {
         {/* Name & category overlay */}
         <div className="absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black/60 to-transparent p-4 pt-12">
           <p className="text-lg font-black text-white">{cause.title}</p>
-          <Badge variant="accent" className="mt-1 text-caption">
-            {cause.category}
-          </Badge>
+          {cause.category && cause.category !== "other" && (
+            <Badge variant="accent" className="mt-1 text-caption">
+              {cause.category}
+            </Badge>
+          )}
         </div>
       </div>
 
