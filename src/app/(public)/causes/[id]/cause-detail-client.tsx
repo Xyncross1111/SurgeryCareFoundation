@@ -413,51 +413,29 @@ export default function CauseDetailClient({ slug }: { slug: string }) {
                   {reports.length > 0 && (
                     <div>
                       <Heading level="h4" as="h2" className="mb-3">Medical Documents</Heading>
-                      <div className="space-y-4">
-                        {reports.map((doc) => {
-                          const isImage = doc.mimeType?.startsWith("image/");
-                          if (isImage && doc.downloadUrl) {
-                            return (
-                              <a
-                                key={doc.id}
-                                href={doc.downloadUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="block overflow-hidden rounded-xl bg-surface-page"
-                              >
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img
-                                  src={doc.downloadUrl}
-                                  alt=""
-                                  className="w-full object-contain"
-                                  loading="lazy"
-                                />
-                              </a>
-                            );
-                          }
-                          // Non-image report (typically PDF) — embed
-                          // big enough to read on the page without
-                          // chrome around it, matching the inline-image
-                          // treatment above. The small caption beneath
-                          // is the escape hatch for tab-out / download.
-                          return (
-                            <div key={doc.id}>
-                              <iframe
-                                src={doc.downloadUrl}
-                                title={doc.fileName}
-                                className="block h-[900px] w-full rounded-xl bg-surface-page"
-                              />
-                              <a
-                                href={doc.downloadUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="mt-2 inline-block text-label font-bold uppercase tracking-[1.2px] text-accent transition-colors hover:text-accent-green"
-                              >
-                                Open in new tab &rarr;
-                              </a>
-                            </div>
-                          );
-                        })}
+                      <div className="space-y-6">
+                        {reports.map((doc) => (
+                          // Single iframe-based shell for both PDFs and
+                          // image reports — browsers render images
+                          // natively in iframes, and this keeps every
+                          // campaign's document section visually
+                          // identical regardless of file type.
+                          <div key={doc.id}>
+                            <iframe
+                              src={doc.downloadUrl}
+                              title={doc.fileName}
+                              className="block h-[900px] w-full rounded-xl bg-surface-page"
+                            />
+                            <a
+                              href={doc.downloadUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="mt-2 inline-block text-label font-bold uppercase tracking-[1.2px] text-accent transition-colors hover:text-accent-green"
+                            >
+                              Open in new tab &rarr;
+                            </a>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   )}
