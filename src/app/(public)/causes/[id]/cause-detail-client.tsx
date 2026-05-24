@@ -349,17 +349,21 @@ export default function CauseDetailClient({ slug }: { slug: string }) {
                 up as a "patient photo". */}
             {documents && documents.length > 0 && (() => {
               // When the description already weaves images into the story
-              // (markdown ![](...) syntax), suppress the auto photo
-              // gallery so the same patient photos don't appear twice.
-              // Videos and Medical Documents always render below the
-              // story so the page flow is identical across campaigns:
-              // story → patient videos → medical documents.
+              // (markdown ![](...) syntax), we suppress the auto photo
+              // gallery and image-only medical reports so the same images
+              // don't appear twice. Non-image reports (PDFs etc) always
+              // render — markdown can't embed them inline. Videos always
+              // render too — they don't fit inline well.
               const inlineMedia = descriptionHasInlineMedia(campaign.description);
               const photos = inlineMedia
                 ? []
                 : documents.filter((d) => d.fileType === "patient_image");
               const videos = documents.filter((d) => d.fileType === "video");
-              const reports = documents.filter((d) => d.fileType === "medical_document");
+              const reports = documents.filter((d) => {
+                if (d.fileType !== "medical_document") return false;
+                if (!inlineMedia) return true;
+                return !d.mimeType?.startsWith("image/");
+              });
               return (
                 <div className="mt-8 space-y-6">
                   {photos.length > 0 && (
@@ -412,25 +416,51 @@ export default function CauseDetailClient({ slug }: { slug: string }) {
 
                   {reports.length > 0 && (
                     <div>
-                      <Heading level="h4" as="h2" className="mb-3">Medical Documents</Heading>
-                      <div className="space-y-6">
+                      <Heading level="h4" as="h2" className="mb-3">Medical Reports</Heading>
+                      <div className="space-y-4">
                         {reports.map((doc) => {
-                          // Strip Chrome/Edge's built-in PDF viewer
-                          // chrome (toolbar, side panes, scrollbar) by
-                          // appending PDF Open Parameters to the URL.
-                          // For non-PDF docs (JPEG reports) the fragment
-                          // is harmless — browsers ignore it.
-                          const isPdf = doc.mimeType === "application/pdf";
-                          const src = isPdf
-                            ? `${doc.downloadUrl}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`
-                            : doc.downloadUrl;
+                          const isImage = doc.mimeType?.startsWith("image/");
+                          if (isImage && doc.downloadUrl) {
+                            return (
+                              <a
+                                key={doc.id}
+                                href={doc.downloadUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block overflow-hidden rounded-xl bg-surface-page"
+                              >
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img
+                                  src={doc.downloadUrl}
+                                  alt=""
+                                  className="w-full object-contain"
+                                  loading="lazy"
+                                />
+                              </a>
+                            );
+                          }
+                          // Non-image report (typically PDF) — embed via
+                          // iframe so the page is self-contained instead
+                          // of forcing donors to download to read.
                           return (
-                            <iframe
+                            <div
                               key={doc.id}
-                              src={src}
-                              title={doc.fileName}
-                              className="block h-[900px] w-full rounded-xl bg-surface-page"
-                            />
+                              className="overflow-hidden rounded-xl border border-surface-border bg-surface-page"
+                            >
+                              <iframe
+                                src={doc.downloadUrl}
+                                title={doc.fileName}
+                                className="block h-[600px] w-full"
+                              />
+                              <a
+                                href={doc.downloadUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block truncate border-t border-surface-border bg-white px-4 py-2 text-label font-bold uppercase tracking-[1.2px] text-accent transition-colors hover:bg-surface-green"
+                              >
+                                Open in new tab — {doc.fileName}
+                              </a>
+                            </div>
                           );
                         })}
                       </div>
