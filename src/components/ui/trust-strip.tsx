@@ -1,18 +1,18 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/container";
 import { ShieldCheckIcon } from "@/components/ui/icons";
 
-const TRUST_BADGES = [
-  "Registered NGO",
-  "12A Tax Exempt",
-  "80G Donor Benefit",
-] as const;
-
 export function TrustStrip() {
+  const t = useTranslations("trustStrip");
+  const badges = [t("regNgo"), t("taxExempt12a"), t("donorBenefit80g")];
+
   return (
     <section className="border-y border-surface-border bg-white py-5">
       <Container>
         <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 sm:gap-x-10">
-          {TRUST_BADGES.map((label) => (
+          {badges.map((label) => (
             <span
               key={label}
               className="inline-flex items-center gap-2 text-btn font-bold uppercase tracking-[1px] text-primary"
@@ -28,7 +28,7 @@ export function TrustStrip() {
             ·
           </span>
           <span className="text-btn font-bold uppercase tracking-[1px] text-slate-light">
-            Documents available on request
+            {t("documentsOnRequest")}
           </span>
         </div>
       </Container>

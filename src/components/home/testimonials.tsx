@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/container";
 import { Heading } from "@/components/ui/heading";
 import { Text } from "@/components/ui/text";
@@ -7,39 +10,22 @@ interface Testimonial {
   quote: string;
   name: string;
   role: string;
-  image: string;
 }
 
-const TESTIMONIALS: Testimonial[] = [
-  {
-    quote:
-      "\u201CSonam was born with a meningocele between her nose and head. The surgery cost lakhs we could never have raised on a daily wage. Surgery Care arranged the funds and the operation \u2014 today she is back at school, healthy and happy.\u201D",
-    name: "Sonam\u2019s Family",
-    role: "Meningocele \u00B7 Cranial Surgery",
-    image: "/images/testimonial-1.png",
-  },
-  {
-    quote:
-      "\u201CMy son Raubi had a fast-growing cancerous tumour on his chin and could barely eat or speak. As a daily-wage labourer I had no way to pay for the urgent surgery. Surgery Care made it happen \u2014 he is now playing and eating without pain.\u201D",
-    name: "Raubi\u2019s Father",
-    role: "Paediatric Oncology",
-    image: "/images/testimonial-2.png",
-  },
-  {
-    quote:
-      "\u201COur newborn was diagnosed with spina bifida myelomeningocele. The surgery cost \u20B92.5 lakh \u2014 impossible on \u20B9300 a day. Surgery Care\u2019s team handled everything. The operation was a success and our baby is growing well.\u201D",
-    name: "Priya & Pawan",
-    role: "Parents \u00B7 Spina Bifida Surgery",
-    image: "/images/testimonial-3.png",
-  },
+const TESTIMONIAL_IMAGES = [
+  "/images/testimonial-1.png",
+  "/images/testimonial-2.png",
+  "/images/testimonial-3.png",
 ];
 
 function TestimonialCard({
   testimonial,
   index,
+  image,
 }: {
   testimonial: Testimonial;
   index: number;
+  image: string;
 }) {
   return (
     <div className="relative pt-6">
@@ -74,7 +60,7 @@ function TestimonialCard({
       <div className="absolute -bottom-6 right-4 z-10 flex size-[112px] items-center justify-center rounded-full bg-white/50 p-2 shadow-secondary">
         <div className="relative size-24 overflow-hidden rounded-full border-[2.667px] border-accent">
           <Image
-            src={testimonial.image}
+            src={image}
             alt={testimonial.name}
             fill
             className="object-cover"
@@ -87,19 +73,27 @@ function TestimonialCard({
 }
 
 export function Testimonials() {
+  const t = useTranslations("testimonials");
+  const items = (t.raw("items") as Testimonial[]) ?? [];
+
   return (
     <section className="py-16 md:py-24">
       <Container>
         {/* Heading */}
         <Heading level="h2" className="mx-auto mb-16 max-w-lg text-center">
-          What People Say About{" "}
-          <span className="text-accent">Surgery Care</span>
+          {t("headingPrefix")}{" "}
+          <span className="text-accent">{t("headingHighlight")}</span>
         </Heading>
 
         {/* Cards */}
         <div className="grid gap-8 pb-8 sm:grid-cols-2 lg:grid-cols-3">
-          {TESTIMONIALS.map((t, i) => (
-            <TestimonialCard key={t.name} testimonial={t} index={i} />
+          {items.map((item, i) => (
+            <TestimonialCard
+              key={item.name}
+              testimonial={item}
+              index={i}
+              image={TESTIMONIAL_IMAGES[i] ?? TESTIMONIAL_IMAGES[0]}
+            />
           ))}
         </div>
       </Container>

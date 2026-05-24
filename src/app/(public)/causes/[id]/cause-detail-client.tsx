@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/container";
 import { Heading } from "@/components/ui/heading";
 import { Text } from "@/components/ui/text";
@@ -17,7 +18,7 @@ import { userService, type SavedCauseEntry } from "@/services/user.service";
 import { useAuth } from "@/context/auth-context";
 import { useToast } from "@/components/ui/toast";
 import { formatINR } from "@/lib/format";
-import { categoryLabel } from "@/lib/categories";
+// categoryLabel replaced with i18n-driven label via tCategories
 import { UrgencyBadge } from "@/components/campaign/urgency-badge";
 import { CoverSlideshow } from "@/components/campaign/cover-slideshow";
 import { QuickDonateBar } from "@/components/campaign/quick-donate-bar";
@@ -49,6 +50,8 @@ const SIDEBAR_PAYMENT_METHODS = [
 ] as const;
 
 export default function CauseDetailClient({ slug }: { slug: string }) {
+  const t = useTranslations("causeDetail");
+  const tCategories = useTranslations("categories");
   const router = useRouter();
   const { user } = useAuth();
   const { toast } = useToast();
@@ -101,9 +104,9 @@ export default function CauseDetailClient({ slug }: { slug: string }) {
         (document as { execCommand: (c: string) => boolean }).execCommand("copy");
         document.body.removeChild(ta);
       }
-      toast("Link copied to clipboard", "success");
+      toast(t("linkCopied"), "success");
     } catch {
-      toast("Couldn't copy link, please copy from the address bar.", "error");
+      toast(t("linkCopyFailed"), "error");
       return;
     }
     try {
@@ -119,7 +122,7 @@ export default function CauseDetailClient({ slug }: { slug: string }) {
       <section className="py-8 md:py-12">
         <Container>
           <div className="flex min-h-[400px] items-center justify-center">
-            <Text variant="secondary">Loading campaign details...</Text>
+            <Text variant="secondary">{t("loading")}</Text>
           </div>
         </Container>
       </section>
@@ -131,9 +134,9 @@ export default function CauseDetailClient({ slug }: { slug: string }) {
       <section className="py-8 md:py-12">
         <Container>
           <div className="flex min-h-[400px] flex-col items-center justify-center gap-4">
-            <Heading level="h3">Unable to load campaign</Heading>
+            <Heading level="h3">{t("unableToLoadHeading")}</Heading>
             <Text variant="secondary">
-              {campaignError || "Campaign not found. It may have been removed or the link is incorrect."}
+              {campaignError || t("unableToLoadBody")}
             </Text>
             <Link
               href="/causes"
@@ -162,14 +165,14 @@ export default function CauseDetailClient({ slug }: { slug: string }) {
     try {
       if (isSaved) {
         await userService.removeSavedCause(campaign.id);
-        toast("Cause removed from your saved list.");
+        toast(t("saveRemovedToast"));
       } else {
         await userService.saveCause(campaign.id);
-        toast("Cause saved for later.");
+        toast(t("saveAddedToast"));
       }
       refetchSavedCauses();
     } catch (err) {
-      toast(err instanceof Error ? err.message : "Unable to update saved causes.", "error");
+      toast(err instanceof Error ? err.message : t("saveFailedToast"), "error");
     } finally {
       setIsSaving(false);
     }
@@ -198,7 +201,7 @@ export default function CauseDetailClient({ slug }: { slug: string }) {
             </div>
 
             <div className="mb-6 flex flex-wrap items-center gap-3">
-              <Badge variant="accent">{categoryLabel(campaign.category)}</Badge>
+              <Badge variant="accent">{tCategories(campaign.category ?? "other")}</Badge>
               <UrgencyBadge level={campaign.urgencyLevel} />
               {campaign.condition && (
                 <Text variant="secondary" className="font-bold">
@@ -208,7 +211,7 @@ export default function CauseDetailClient({ slug }: { slug: string }) {
             </div>
 
             <Heading level="h2" as="h1" className="mb-6">
-              {/[.!?]/.test(campaign.title) ? campaign.title : `Help ${campaign.title}`}
+              {/[.!?]/.test(campaign.title) ? campaign.title : `${t("helpPrefix")} ${campaign.title}`}
             </Heading>
           </div>
 
@@ -229,41 +232,41 @@ export default function CauseDetailClient({ slug }: { slug: string }) {
                 </p>
                 <p className="text-btn font-black text-accent">
                   {(() => {
-                    if (campaign.goalAmount <= 0) return "0% funded";
+                    if (campaign.goalAmount <= 0) return t("fundedZero");
                     const pct = (campaign.raisedAmount / campaign.goalAmount) * 100;
-                    // Avoid showing "0% funded" when something has been
-                    // raised but rounding hides it. Anything below 1
-                    // becomes "<1%" so donors see their contribution
-                    // registered even on huge goals.
-                    if (campaign.raisedAmount > 0 && pct < 1) return "<1% funded";
-                    return `${Math.round(pct)}% funded`;
+                    if (campaign.raisedAmount > 0 && pct < 1) return t("fundedTiny");
+                    return `${Math.round(pct)}% ${t("fundedSuffix")}`;
                   })()}
                 </p>
               </div>
               <Text variant="muted" size="label" className="mb-3">
-                Raised of &#8377;{formatINR(campaign.goalAmount)} Goal
+                {t("raisedOfGoal", { amount: formatINR(campaign.goalAmount) })}
               </Text>
               <ProgressBar value={campaign.raisedAmount} max={campaign.goalAmount} className="mb-3" />
 
               <div className="mb-4 flex items-center gap-2">
                 <HeartFilledIcon className="size-4 text-red-500" />
-                <Text variant="secondary">{backers} generous {backers === 1 ? "backer" : "backers"}</Text>
+                <Text variant="secondary">
+                  {backers === 1
+                    ? t("generousBacker", { count: backers })
+                    : t("generousBackers", { count: backers })}
+                </Text>
               </div>
 
               <Link
                 href={`/causes/${slug}/checkout`}
                 className={buttonVariants({ variant: "primary", size: "default", className: "mb-3 w-full" })}
               >
-                Donate Now
+                {t("donateNow")}
               </Link>
               <button
                 type="button"
                 onClick={handleShare}
                 className={buttonVariants({ variant: "outline", size: "default", className: "w-full gap-2" })}
-                aria-label="Copy share link to clipboard"
+                aria-label={t("shareAria")}
               >
                 <ShareIcon className="size-4" />
-                Share this cause
+                {t("shareThisCause")}
               </button>
               <button
                 type="button"
@@ -276,20 +279,20 @@ export default function CauseDetailClient({ slug }: { slug: string }) {
                 })}
               >
                 <HeartFilledIcon className={`size-4 ${isSaved ? "text-red-500" : "text-slate-light"}`} />
-                {isSaving ? "Updating..." : isSaved ? "Saved for Later" : "Save Cause"}
+                {isSaving ? t("updating") : isSaved ? t("savedForLater") : t("saveCause")}
               </button>
 
               <div className="mt-4 space-y-2 border-t border-surface-border pt-4">
                 <div className="flex items-start gap-3">
                   <CheckCircleIcon className="mt-0.5 size-5 shrink-0 text-accent" />
                   <Text variant="secondary" className="leading-snug">
-                    Funds are securely processed and sent directly to the partnered medical facility.
+                    {t("fundsSecureNote")}
                   </Text>
                 </div>
                 <div className="flex items-start gap-3">
                   <CheckCircleIcon className="mt-0.5 size-5 shrink-0 text-accent" />
                   <Text variant="secondary" className="leading-snug">
-                    All cases are 100% verified by our expert medical board.
+                    {t("casesVerifiedNote")}
                   </Text>
                 </div>
               </div>
@@ -300,7 +303,7 @@ export default function CauseDetailClient({ slug }: { slug: string }) {
                   methods before tapping Donate. */}
               <div className="mt-4 border-t border-surface-border pt-4">
                 <Text variant="muted" size="label" className="mb-2 tracking-[1.28px]">
-                  We Accept
+                  {t("weAccept")}
                 </Text>
                 <div className="flex flex-wrap gap-1.5">
                   {SIDEBAR_PAYMENT_METHODS.map(({ src, alt, width }) => (
@@ -327,7 +330,7 @@ export default function CauseDetailClient({ slug }: { slug: string }) {
             {campaign.videoUrl && extractYouTubeId(campaign.videoUrl) && (
               <div className="mb-6">
                 <Heading level="h4" as="h2" className="mb-3">
-                  Watch the Story
+                  {t("watchTheStory")}
                 </Heading>
                 <YouTubeEmbed url={campaign.videoUrl} title={campaign.title} />
               </div>
@@ -399,7 +402,7 @@ export default function CauseDetailClient({ slug }: { slug: string }) {
                               preload="metadata"
                               className="mx-auto block max-h-[500px] max-w-full"
                             >
-                              Your browser does not support embedded video.
+                              {t("videoUnsupported")}
                             </video>
                           </div>
                         ))}
@@ -456,7 +459,7 @@ export default function CauseDetailClient({ slug }: { slug: string }) {
             {!updatesLoading && !updatesError && updates.length > 0 && (
               <div className="mt-10">
                 <Heading level="h4" as="h2" className="mb-4">
-                  Updates from the team
+                  {t("updatesHeading")}
                 </Heading>
                 <ol className="relative space-y-5 border-l-2 border-surface-border pl-6">
                   {updates.map((update: CampaignUpdate) => {
@@ -473,7 +476,7 @@ export default function CauseDetailClient({ slug }: { slug: string }) {
                             <span
                               className={`inline-flex items-center rounded-full px-2.5 py-1 text-caption font-bold uppercase tracking-[1px] ${kindStyle.pill}`}
                             >
-                              {kindStyle.label}
+                              {t(`updateKind.${update.kind}`)}
                             </span>
                             <Text variant="muted" size="label" className="ml-auto">
                               {new Date(update.createdAt).toLocaleDateString("en-IN", {
@@ -510,7 +513,7 @@ export default function CauseDetailClient({ slug }: { slug: string }) {
                                   rel="noopener noreferrer"
                                   className="inline-flex items-center gap-2 rounded-full bg-surface-green px-4 py-2 text-btn font-bold text-accent hover:bg-accent hover:text-white"
                                 >
-                                  View attached document
+                                  {t("viewAttachedDocument")}
                                 </a>
                               )}
                             </div>

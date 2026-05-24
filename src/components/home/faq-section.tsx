@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { Container } from "@/components/ui/container";
 import { Heading } from "@/components/ui/heading";
@@ -12,29 +13,6 @@ interface FaqItem {
   question: string;
   answer: string;
 }
-
-const FAQ_ITEMS: FaqItem[] = [
-  {
-    question: "How do I know my donation actually reaches the patient?",
-    answer:
-      "Donations are sent directly to the hospital that performs the surgery, never to a patient or family bank account. Every case is medically verified before it goes live, and our team coordinates the admission and stays with the family through recovery so every rupee is accounted for.",
-  },
-  {
-    question: "How do you choose the hospitals you work with?",
-    answer:
-      "We work only with established, accredited hospitals. Every partner is reviewed by our team before any patient is referred there, so the clinical quality and safety standards are consistent across our network.",
-  },
-  {
-    question: "What kinds of cases do you support?",
-    answer:
-      "We support patients of all ages who need surgical care they cannot afford, including children with congenital conditions, cancer patients, burn-injury cases, and other critical surgical needs. Every case is medically reviewed and verified before it goes live.",
-  },
-  {
-    question: "How are donations used and tracked?",
-    answer:
-      "Funds raised for a patient are transferred directly to the hospital that performs the surgery. Our team verifies every case, coordinates the admission, and accompanies the family through the treatment so every rupee goes to care. T&C applied.",
-  },
-];
 
 function AccordionItem({
   item,
@@ -84,6 +62,8 @@ function AccordionItem({
 }
 
 export function FaqSection() {
+  const t = useTranslations("faq");
+  const items = (t.raw("items") as FaqItem[]) ?? [];
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
@@ -98,18 +78,18 @@ export function FaqSection() {
                 variant="muted"
                 className="mb-3 tracking-[1.2px] text-accent font-bold"
               >
-                Clear Your Doubts
+                {t("eyebrow")}
               </Text>
               <Heading level="h2">
-                Frequently Asked{" "}
+                {t("headingPrefix")}{" "}
                 <span className="bg-gradient-to-b from-accent-green to-accent-mint bg-clip-text text-transparent">
-                  Question
+                  {t("headingHighlight")}
                 </span>
               </Heading>
             </div>
 
             <div className="flex flex-col gap-4">
-              {FAQ_ITEMS.map((item, index) => (
+              {items.map((item, index) => (
                 <AccordionItem
                   key={item.question}
                   item={item}

@@ -1,10 +1,12 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { Container } from "@/components/ui/container";
 import { Heading } from "@/components/ui/heading";
 import { Text } from "@/components/ui/text";
 import { buttonVariants } from "@/components/ui/button";
 
-export default function CauseNotFound() {
+export default async function CauseNotFound() {
+  const t = await getTranslations("notFound");
   return (
     <section className="py-24 md:py-32">
       <Container className="text-center">
@@ -12,13 +14,13 @@ export default function CauseNotFound() {
           <span className="text-4xl text-slate-light">?</span>
         </div>
         <Heading level="h2" as="h1" className="mb-3">
-          Cause Not Found
+          {t("heading")}
         </Heading>
         <Text variant="secondary" className="mb-8 mx-auto max-w-md">
-          The cause you&apos;re looking for doesn&apos;t exist or may have been removed.
+          {t("body")}
         </Text>
         <Link href="/causes" className={buttonVariants({ variant: "secondary", size: "lg" })}>
-          Browse All Causes
+          {t("viewAll")}
         </Link>
       </Container>
     </section>

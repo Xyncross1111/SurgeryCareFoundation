@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/container";
 import { Heading } from "@/components/ui/heading";
 import { Text } from "@/components/ui/text";
@@ -7,6 +10,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { CheckCircleIcon, ArrowRightIcon } from "@/components/ui/icons";
 
 export function MissionSection() {
+  const t = useTranslations("mission");
   return (
     <section className="py-16 md:py-24">
       <Container>
@@ -32,25 +36,22 @@ export function MissionSection() {
                 size="label"
                 className="font-black tracking-[1.4px] text-accent-green"
               >
-                Make an Impact
+                {t("label")}
               </Text>
             </div>
 
             {/* Heading */}
             <Heading level="h2" className="mb-6">
-              Donate to{" "}
+              {t("headingPrefix")}{" "}
               <span className="bg-gradient-to-b from-accent-green to-accent-mint bg-clip-text text-transparent">
-                Support
+                {t("headingHighlight")}
               </span>{" "}
-              Life-Saving Surgeries
+              {t("headingSuffix")}
             </Heading>
 
             {/* Body */}
             <Text variant="secondary" size="body-lg" className="mb-8">
-              Surgery Care partners with top hospitals across India to bring
-              high-quality treatment to every class of patient. For families
-              who cannot afford care, we raise the funds needed and complete
-              the treatment at no cost, staying with the patient end to end.
+              {t("body")}
             </Text>
 
             {/* Callout */}
@@ -59,7 +60,7 @@ export function MissionSection() {
                 <CheckCircleIcon className="size-6 text-accent" />
               </span>
               <p className="text-btn-lg font-bold text-primary">
-                The patient always comes first, from first consult to full recovery.
+                {t("callout")}
               </p>
             </div>
 
@@ -72,7 +73,7 @@ export function MissionSection() {
                 className: "gap-2",
               })}
             >
-              About Us
+              {t("cta")}
               <ArrowRightIcon className="size-5" />
             </Link>
           </div>

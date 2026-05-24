@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/container";
 import { Heading } from "@/components/ui/heading";
 import { Text } from "@/components/ui/text";
@@ -10,6 +11,7 @@ import { publicService } from "@/services/public.service";
 import type { BoardMember } from "@/types/content";
 
 function TeamCard({ member }: { member: BoardMember }) {
+  const t = useTranslations("volunteerTeam");
   return (
     <div className="flex flex-col items-center text-center">
       <div className="relative mb-6 w-full max-w-[357px]">
@@ -50,7 +52,7 @@ function TeamCard({ member }: { member: BoardMember }) {
         {member.name}
       </Heading>
       <Text as="span" size="label" className="font-bold tracking-[0.35px] text-accent">
-        {member.title || "Core Team"}
+        {member.title || t("coreTeam")}
       </Text>
       {member.bio && (
         <Text variant="secondary" className="mt-3 max-w-sm">
@@ -62,6 +64,7 @@ function TeamCard({ member }: { member: BoardMember }) {
 }
 
 export function VolunteerTeam() {
+  const t = useTranslations("volunteerTeam");
   const { data: members, isLoading } = useApi<BoardMember[]>(
     () => publicService.getBoardMembers(),
     [],
@@ -75,13 +78,13 @@ export function VolunteerTeam() {
         <div className="mb-3 flex items-center justify-center gap-3">
           <span className="h-px w-6 bg-accent-green" />
           <Text as="span" size="label" className="font-black tracking-[1.4px] text-accent-green">
-            Our People
+            {t("label")}
           </Text>
           <span className="h-px w-6 bg-accent-green" />
         </div>
 
         <Heading level="h2" className="mx-auto mb-16 max-w-md text-center">
-          Meet Our Volunteer <span className="text-accent">Team</span> Members
+          {t("headingPrefix")} <span className="text-accent">{t("headingHighlight")}</span> {t("headingSuffix")}
         </Heading>
 
         {isLoading ? (
@@ -102,10 +105,10 @@ export function VolunteerTeam() {
         ) : (
           <div className="rounded-[32px] border border-surface-border bg-white px-6 py-14 text-center shadow-card">
             <Heading level="h4" as="h3" className="mb-2">
-              Team details coming soon
+              {t("emptyHeading")}
             </Heading>
             <Text variant="secondary">
-              We&apos;re updating the latest board and volunteer information right now.
+              {t("emptyBody")}
             </Text>
           </div>
         )}

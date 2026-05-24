@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/container";
 import { Heading } from "@/components/ui/heading";
 import { Text } from "@/components/ui/text";
@@ -16,6 +17,7 @@ import { campaignService } from "@/services/campaign.service";
 import type { Campaign } from "@/types/campaign";
 
 function CauseCard({ cause }: { cause: Campaign }) {
+  const t = useTranslations("causesPreview");
   // "<1%" instead of "0%" when something has been raised but rounding
   // hides it (e.g. ₹20 of a ₹15L goal). Matches the cause listing card.
   const percentageLabel = (() => {
@@ -81,14 +83,14 @@ function CauseCard({ cause }: { cause: Campaign }) {
           </p>
         </div>
         <div className="mb-3 flex justify-between">
-          <Text as="span" variant="muted" size="label">Raised</Text>
-          <Text as="span" variant="muted" size="label">Backers</Text>
+          <Text as="span" variant="muted" size="label">{t("raised")}</Text>
+          <Text as="span" variant="muted" size="label">{t("backers")}</Text>
         </div>
 
         {/* Progress */}
         <div className="mb-1 flex justify-between">
           <Text as="span" variant="muted" size="label">
-            Goal: &#8377; {formatINR(cause.goalAmount)}
+            {t("goalPrefix", { amount: formatINR(cause.goalAmount) })}
           </Text>
           <Text as="span" variant="muted" size="label">{percentageLabel}</Text>
         </div>
@@ -102,7 +104,7 @@ function CauseCard({ cause }: { cause: Campaign }) {
             className: "w-full",
           })}
         >
-          Donate Now
+          {t("donateNow")}
         </span>
       </CardContent>
     </Card>
@@ -111,6 +113,7 @@ function CauseCard({ cause }: { cause: Campaign }) {
 }
 
 export function CausesPreview() {
+  const t = useTranslations("causesPreview");
   const { data, isLoading } = useApi(
     () => campaignService.list({ limit: 4, sort: "createdAt", order: "desc" }),
     [],
@@ -123,9 +126,7 @@ export function CausesPreview() {
       <Container>
         <div className="mb-12 max-w-3xl">
           <Heading level="h2" className="mb-4">
-            Help and donate to them{" "}
-            <br className="hidden md:block" />
-            when they are in need.
+            {t("heading")}
           </Heading>
         </div>
 
@@ -145,7 +146,7 @@ export function CausesPreview() {
           </div>
         ) : campaigns.length === 0 ? (
           <Text variant="secondary" className="text-center py-12">
-            No active campaigns right now. Check back soon!
+            {t("emptyState")}
           </Text>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">

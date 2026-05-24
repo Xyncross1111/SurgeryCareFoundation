@@ -3,11 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { formatINR } from "@/lib/format";
 import { useApi } from "@/hooks/use-api";
 import { campaignService } from "@/services/campaign.service";
-import { CAMPAIGN_CATEGORIES, categoryLabel } from "@/lib/categories";
+import { CAMPAIGN_CATEGORIES } from "@/lib/categories";
 import { UrgencyBadge } from "@/components/campaign/urgency-badge";
 import type { CampaignFilters } from "@/types/campaign";
 import { Container } from "@/components/ui/container";
@@ -19,12 +20,13 @@ import { ProgressBar } from "@/components/ui/progress-bar";
 import { buttonVariants } from "@/components/ui/button";
 import { TrustStrip } from "@/components/ui/trust-strip";
 
-const FILTER_CHIPS = [
-  { value: "", label: "All Causes" },
-  ...CAMPAIGN_CATEGORIES.map((c) => ({ value: c.value, label: c.label })),
-] as const;
-
 export default function CausesListClient() {
+  const t = useTranslations("causesList");
+  const tCategories = useTranslations("categories");
+  const filterChips = [
+    { value: "", label: t("all") },
+    ...CAMPAIGN_CATEGORIES.map((c) => ({ value: c.value, label: tCategories(c.value) })),
+  ];
   const [activeFilter, setActiveFilter] = useState<string>(""); // "" = All Causes
   const [page, setPage] = useState(1);
 
@@ -55,33 +57,35 @@ export default function CausesListClient() {
         <div className="mb-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-3xl">
             <Text size="label" className="mb-3 text-accent">
-              PUBLIC FUNDRAISERS
+              {t("eyebrow")}
             </Text>
             <Heading level="h1" as="h1" className="mb-4 lg:!text-[56px] lg:!leading-[60px] lg:!tracking-[-1.4px]">
-              All campaigns on{" "}
+              {t("headingPrefix")}{" "}
               <br />
               <span className="bg-gradient-to-b from-accent-mint to-accent-green bg-clip-text text-transparent">
-                Surgery Care Foundation
+                {t("headingHighlight")}
               </span>
             </Heading>
             <Text variant="secondary" size="body-lg">
-              Browse every live fundraiser, track progress, and open a campaign to donate directly.
+              {t("subheading")}
             </Text>
           </div>
           {(data?.total ?? campaigns.length) > 0 && (
             <div className="rounded-2xl border border-surface-border bg-white px-5 py-4 shadow-card">
               <Text size="label" variant="muted" className="mb-1">
-                Showing
+                {t("showing")}
               </Text>
               <p className="text-h5 font-black text-primary">
-                {data?.total ?? campaigns.length} campaign{(data?.total ?? campaigns.length) === 1 ? "" : "s"}
+                {(data?.total ?? campaigns.length) === 1
+                  ? t("campaignsOne", { count: data?.total ?? campaigns.length })
+                  : t("campaignsOther", { count: data?.total ?? campaigns.length })}
               </p>
             </div>
           )}
         </div>
 
         <div className="mb-10 flex flex-wrap gap-2">
-            {FILTER_CHIPS.map((chip) => (
+            {filterChips.map((chip) => (
               <button
                 key={chip.value || "all"}
                 type="button"
@@ -126,12 +130,10 @@ export default function CausesListClient() {
           <div className="flex flex-col items-center justify-center gap-6 py-16 text-center">
             <div className="max-w-md">
               <Heading level="h4" as="h2" className="mb-2 text-primary">
-                No active campaigns right now
+                {t("emptyHeading")}
               </Heading>
               <Text variant="secondary" size="body-lg">
-                {activeFilter
-                  ? "Try a different category, or check back soon. New verified cases are added regularly."
-                  : "New verified cases are added regularly. In the meantime, you can still support our mission by donating to the foundation."}
+                {activeFilter ? t("emptyMessageFiltered") : t("emptyMessageDefault")}
               </Text>
             </div>
             {!activeFilter && (
@@ -139,7 +141,7 @@ export default function CausesListClient() {
                 href="/contact"
                 className={buttonVariants({ variant: "secondary", size: "lg" })}
               >
-                Donate to the Foundation
+                {t("donateToFoundation")}
               </Link>
             )}
           </div>
@@ -187,7 +189,7 @@ export default function CausesListClient() {
                       />
                       <div className="absolute left-3 right-3 top-3 z-10 flex items-center justify-between gap-2">
                         <Badge variant="accent" className="text-caption shadow-sm">
-                          {categoryLabel(campaign.category)}
+                          {tCategories(campaign.category ?? "other")}
                         </Badge>
                         <UrgencyBadge level={campaign.urgencyLevel} className="shadow-sm" />
                       </div>
@@ -214,7 +216,7 @@ export default function CausesListClient() {
                             &#8377;&nbsp;{formatINR(campaign.raisedAmount)}
                           </p>
                           <p className="text-btn font-black text-accent">
-                            {pctLabel} funded
+                            {pctLabel} {t("fundedSuffix")}
                           </p>
                         </div>
                         <ProgressBar
@@ -224,10 +226,10 @@ export default function CausesListClient() {
                         />
                         <div className="mb-4 flex items-center justify-between">
                           <Text variant="muted" size="label" className="normal-case tracking-normal">
-                            of &#8377;&nbsp;{formatINR(campaign.goalAmount)} goal
+                            {t("ofGoal", { amount: formatINR(campaign.goalAmount) })}
                           </Text>
                           <Text variant="muted" size="label" className="normal-case tracking-normal">
-                            {backers} {backers === 1 ? "backer" : "backers"}
+                            {backers === 1 ? t("backerOne", { count: backers }) : t("backerOther", { count: backers })}
                           </Text>
                         </div>
                         <span
@@ -236,7 +238,7 @@ export default function CausesListClient() {
                             className: "w-full !text-white hover:!text-white",
                           })}
                         >
-                          Donate Now
+                          {t("donateNow")}
                         </span>
                       </div>
                     </CardContent>
@@ -259,7 +261,7 @@ export default function CausesListClient() {
                       : "bg-white text-slate hover:bg-surface-page"
                   )}
                 >
-                  Previous
+                  {t("previous")}
                 </button>
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map(
                   (p) => (
@@ -289,7 +291,7 @@ export default function CausesListClient() {
                       : "bg-white text-slate hover:bg-surface-page"
                   )}
                 >
-                  Next
+                  {t("next")}
                 </button>
               </div>
             )}

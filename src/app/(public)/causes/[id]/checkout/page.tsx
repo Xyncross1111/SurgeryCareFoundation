@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { formatINR } from "@/lib/format";
 import { useApi } from "@/hooks/use-api";
@@ -39,6 +40,7 @@ async function loadRazorpayScript() {
 }
 
 export default function CheckoutPage({ params }: { params: { id: string } }) {
+  const t = useTranslations("checkout");
   const router = useRouter();
   const searchParams = useSearchParams();
   const { toast } = useToast();
@@ -76,23 +78,23 @@ export default function CheckoutPage({ params }: { params: { id: string } }) {
 
   async function handleSubmit() {
     if (!firstName.trim()) {
-      toast("First name is required.", "error");
+      toast(t("errors.firstNameRequired"), "error");
       return;
     }
     if (!email.trim()) {
-      toast("Email address is required.", "error");
+      toast(t("errors.emailRequired"), "error");
       return;
     }
     if (donationAmount <= 0) {
-      toast("Please select or enter a donation amount.", "error");
+      toast(t("errors.amountRequired"), "error");
       return;
     }
     if (!campaign) {
-      toast("Campaign details are not loaded yet.", "error");
+      toast(t("errors.campaignNotLoaded"), "error");
       return;
     }
     if (captchaRequired && !captchaToken) {
-      toast("Please complete the verification challenge before donating.", "error");
+      toast(t("errors.captchaRequired"), "error");
       return;
     }
 
@@ -125,12 +127,12 @@ export default function CheckoutPage({ params }: { params: { id: string } }) {
       }
 
       if (!paymentIntent.clientData.key || !paymentIntent.clientData.order_id) {
-        throw new Error("Payment gateway is not configured yet. Please try again later.");
+        throw new Error(t("errors.gatewayNotConfigured"));
       }
 
       const razorpayLoaded = await loadRazorpayScript();
       if (!razorpayLoaded) {
-        throw new Error("Unable to load the payment gateway. Please try again.");
+        throw new Error(t("errors.razorpayFailedToLoad"));
       }
 
       const Razorpay = (window as Window & {
@@ -138,7 +140,7 @@ export default function CheckoutPage({ params }: { params: { id: string } }) {
       }).Razorpay;
 
       if (!Razorpay) {
-        throw new Error("Payment gateway is unavailable right now.");
+        throw new Error(t("errors.gatewayUnavailable"));
       }
 
       const razorpay = new Razorpay({
@@ -170,7 +172,7 @@ export default function CheckoutPage({ params }: { params: { id: string } }) {
             toast(
               err instanceof Error
                 ? err.message
-                : "Payment was captured, but confirmation failed. Please contact support.",
+                : t("errors.verificationFailed"),
               "error",
             );
           } finally {
@@ -190,7 +192,7 @@ export default function CheckoutPage({ params }: { params: { id: string } }) {
       razorpay.open();
     } catch (err) {
       toast(
-        err instanceof Error ? err.message : "Something went wrong. Please try again.",
+        err instanceof Error ? err.message : t("errors.generic"),
         "error",
       );
       setIsSubmitting(false);
@@ -204,10 +206,10 @@ export default function CheckoutPage({ params }: { params: { id: string } }) {
           href={`/causes/${params.id}`}
           className="mb-2 inline-flex items-center gap-1 text-btn font-bold text-slate-medium transition-colors hover:text-primary"
         >
-          <span aria-hidden="true">&larr;</span> Back to Cause
+          {t("back")}
         </Link>
         <Heading level="h2" as="h1" className="mb-8">
-          Secure Checkout
+          {t("heading")}
         </Heading>
 
         <div className="grid gap-8 lg:grid-cols-5 lg:gap-12">
@@ -215,7 +217,7 @@ export default function CheckoutPage({ params }: { params: { id: string } }) {
             <div className="rounded-2xl bg-white p-6 shadow-card md:p-8">
               <fieldset className="mb-8">
                 <legend className="mb-4 text-label uppercase text-slate-light">
-                  Select Donation Amount
+                  {t("selectAmount")}
                 </legend>
                 <div className="mb-4 grid grid-cols-3 gap-3">
                   {AMOUNTS.map((amt) => (
@@ -238,31 +240,31 @@ export default function CheckoutPage({ params }: { params: { id: string } }) {
                   ))}
                 </div>
                 <Input
-                  placeholder="&#8377; Other Amount"
+                  placeholder={t("otherAmount")}
                   value={customAmount}
                   onChange={(event) => setCustomAmount(event.target.value)}
                 />
               </fieldset>
 
               <Heading level="h4" as="h2" className="mb-4">
-                Personal Details
+                {t("personalDetails")}
               </Heading>
               <div className="mb-6 space-y-4">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <Input
-                    placeholder="First Name"
+                    placeholder={t("firstName")}
                     value={firstName}
                     onChange={(event) => setFirstName(event.target.value)}
                   />
                   <Input
-                    placeholder="Last Name"
+                    placeholder={t("lastName")}
                     value={lastName}
                     onChange={(event) => setLastName(event.target.value)}
                   />
                 </div>
                 <Input
                   type="email"
-                  placeholder="Email Address"
+                  placeholder={t("email")}
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
                 />
@@ -274,14 +276,14 @@ export default function CheckoutPage({ params }: { params: { id: string } }) {
                     className="size-4 rounded border-surface-border accent-accent"
                   />
                   <Text variant="secondary" as="span">
-                    Make my donation anonymous
+                    {t("anonymous")}
                   </Text>
                 </label>
               </div>
 
               <div className="mb-6 rounded-xl bg-surface-page px-6 py-4">
                 <Text variant="secondary" className="text-center">
-                  You&apos;ll be taken to Razorpay to complete your payment securely.
+                  {t("razorpayNotice")}
                 </Text>
               </div>
 
@@ -299,14 +301,14 @@ export default function CheckoutPage({ params }: { params: { id: string } }) {
                 disabled={isSubmitting || (captchaRequired && !captchaToken)}
               >
                 {isSubmitting
-                  ? "Opening Payment..."
-                  : `Complete Donation of \u20B9${formatINR(donationAmount)}`}
+                  ? t("openingPayment")
+                  : t("completeDonation", { amount: formatINR(donationAmount) })}
               </Button>
 
               <div className="mt-4 flex items-center justify-center gap-2 text-slate-light">
                 <LockIcon className="size-4" />
                 <Text as="span" variant="muted" size="label" className="normal-case tracking-normal">
-                  256-bit Secure Encryption
+                  {t("secure")}
                 </Text>
               </div>
             </div>
@@ -315,7 +317,7 @@ export default function CheckoutPage({ params }: { params: { id: string } }) {
           <aside className="lg:col-span-2">
             <div className="sticky top-32 rounded-2xl border border-surface-border bg-white p-6 shadow-card">
               <Heading level="h4" as="h2" className="mb-4">
-                Donation Summary
+                {t("summary")}
               </Heading>
 
               <div className="mb-6 flex items-center gap-3 border-b border-surface-border pb-6">
@@ -346,7 +348,7 @@ export default function CheckoutPage({ params }: { params: { id: string } }) {
                     )}
                     <div>
                       <Text variant="muted" size="label" className="normal-case tracking-normal">
-                        Supporting
+                        {t("supporting")}
                       </Text>
                       <p className="text-btn font-black text-primary">{campaign.title}</p>
                       <Text variant="muted" size="label" className="normal-case tracking-normal">
@@ -355,21 +357,21 @@ export default function CheckoutPage({ params }: { params: { id: string } }) {
                     </div>
                   </>
                 ) : (
-                  <Text variant="secondary">Campaign not found</Text>
+                  <Text variant="secondary">{t("campaignNotFound")}</Text>
                 )}
               </div>
 
               <div className="space-y-3">
                 <div className="flex justify-between">
-                  <Text variant="secondary">Donation Amount</Text>
+                  <Text variant="secondary">{t("donationAmount")}</Text>
                   <Text className="font-bold">&#8377; {formatINR(donationAmount)}</Text>
                 </div>
                 <div className="flex justify-between">
-                  <Text variant="secondary">Platform Fee (0%)</Text>
+                  <Text variant="secondary">{t("platformFee")}</Text>
                   <Text className="font-bold">&#8377; 0</Text>
                 </div>
                 <div className="flex justify-between border-t border-surface-border pt-3">
-                  <p className="text-btn-lg font-black text-primary">Total</p>
+                  <p className="text-btn-lg font-black text-primary">{t("total")}</p>
                   <p className="text-btn-lg font-black text-accent">
                     &#8377; {formatINR(donationAmount)}
                   </p>

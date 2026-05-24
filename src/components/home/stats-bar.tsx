@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/container";
 import { useApi } from "@/hooks/use-api";
 import { publicService } from "@/services/public.service";
@@ -11,6 +12,7 @@ interface StatsBarProps {
 }
 
 export function StatsBar({ initialStats }: StatsBarProps = {}) {
+  const t = useTranslations("statsBar");
   const { data: liveStats } = useApi(() => publicService.getStats(), []);
   const stats = liveStats ?? initialStats ?? null;
 
@@ -19,10 +21,10 @@ export function StatsBar({ initialStats }: StatsBarProps = {}) {
   const activeCausesValue = String(stats?.totalCampaigns ?? 0);
 
   const items = [
-    { value: "85", label: "Volunteers" },
-    { value: raisedValue, label: "Raised" },
-    { value: donationsValue, label: "Donations" },
-    { value: activeCausesValue, label: "Active Causes" },
+    { value: "85", label: t("volunteers") },
+    { value: raisedValue, label: t("raised") },
+    { value: donationsValue, label: t("donations") },
+    { value: activeCausesValue, label: t("activeCauses") },
   ];
 
   return (

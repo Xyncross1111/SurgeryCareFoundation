@@ -21,6 +21,107 @@
     "description": "We connect patients to top hospitals across India for high-quality treatment, and raise funds so that no family has to delay life-saving surgery for cost. Every case is medically verified before it goes live, and your contribution is sent directly to the hospital, never to a personal account.",
     "donateNow": "Donate Now"
   },
+  "impactStats": {
+    "totalRaisedFund": "Total Raised Fund",
+    "raised": "Raised",
+    "goal": "Goal",
+    "progress": "Progress",
+    "donors": "Donors",
+    "campaigns": "Campaigns",
+    "year": "Year {year}",
+    "healthcare": "Healthcare",
+    "howSupportHeading": "How Your Support Makes a Difference",
+    "howSupportBody": "Every donation funds a verified surgical case at a partnered hospital. We stay with each patient from counselling through recovery."
+  },
+  "statsBar": {
+    "volunteers": "Volunteers",
+    "raised": "Raised",
+    "donations": "Donations",
+    "activeCauses": "Active Causes"
+  },
+  "trustStrip": {
+    "regNgo": "Registered NGO",
+    "taxExempt12a": "12A Tax Exempt",
+    "donorBenefit80g": "80G Donor Benefit",
+    "documentsOnRequest": "Documents available on request"
+  },
+  "mission": {
+    "label": "Make an Impact",
+    "headingPrefix": "Donate to",
+    "headingHighlight": "Support",
+    "headingSuffix": "Life-Saving Surgeries",
+    "body": "Surgery Care partners with top hospitals across India to bring high-quality treatment to every class of patient. For families who cannot afford care, we raise the funds needed and complete the treatment at no cost, staying with the patient end to end.",
+    "callout": "The patient always comes first, from first consult to full recovery.",
+    "cta": "About Us"
+  },
+  "causesPreview": {
+    "heading": "Help and donate to them when they are in need.",
+    "donateNow": "Donate Now",
+    "raised": "Raised",
+    "backers": "Backers",
+    "goalPrefix": "Goal: ₹ {amount}",
+    "emptyState": "No active campaigns right now. Check back soon!"
+  },
+  "volunteerTeam": {
+    "label": "Our People",
+    "headingPrefix": "Meet Our Volunteer",
+    "headingHighlight": "Team",
+    "headingSuffix": "Members",
+    "coreTeam": "Core Team",
+    "emptyHeading": "Team details coming soon",
+    "emptyBody": "We're updating the latest board and volunteer information right now."
+  },
+  "testimonials": {
+    "headingPrefix": "What People Say About",
+    "headingHighlight": "Surgery Care",
+    "items": [
+      {
+        "quote": "“Sonam was born with a meningocele between her nose and head. The surgery cost lakhs we could never have raised on a daily wage. Surgery Care arranged the funds and the operation — today she is back at school, healthy and happy.”",
+        "name": "Sonam's Family",
+        "role": "Meningocele · Cranial Surgery"
+      },
+      {
+        "quote": "“My son Raubi had a fast-growing cancerous tumour on his chin and could barely eat or speak. As a daily-wage labourer I had no way to pay for the urgent surgery. Surgery Care made it happen — he is now playing and eating without pain.”",
+        "name": "Raubi's Father",
+        "role": "Paediatric Oncology"
+      },
+      {
+        "quote": "“Our newborn was diagnosed with spina bifida myelomeningocele. The surgery cost ₹2.5 lakh — impossible on ₹300 a day. Surgery Care's team handled everything. The operation was a success and our baby is growing well.”",
+        "name": "Priya & Pawan",
+        "role": "Parents · Spina Bifida Surgery"
+      }
+    ]
+  },
+  "faq": {
+    "eyebrow": "Clear Your Doubts",
+    "headingPrefix": "Frequently Asked",
+    "headingHighlight": "Question",
+    "items": [
+      {
+        "question": "How do I know my donation actually reaches the patient?",
+        "answer": "Donations are sent directly to the hospital that performs the surgery, never to a patient or family bank account. Every case is medically verified before it goes live, and our team coordinates the admission and stays with the family through recovery so every rupee is accounted for."
+      },
+      {
+        "question": "How do you choose the hospitals you work with?",
+        "answer": "We work only with established, accredited hospitals. Every partner is reviewed by our team before any patient is referred there, so the clinical quality and safety standards are consistent across our network."
+      },
+      {
+        "question": "What kinds of cases do you support?",
+        "answer": "We support patients of all ages who need surgical care they cannot afford, including children with congenital conditions, cancer patients, burn-injury cases, and other critical surgical needs. Every case is medically reviewed and verified before it goes live."
+      },
+      {
+        "question": "How are donations used and tracked?",
+        "answer": "Funds raised for a patient are transferred directly to the hospital that performs the surgery. Our team verifies every case, coordinates the admission, and accompanies the family through the treatment so every rupee goes to care. T&C applied."
+      }
+    ]
+  },
+  "rotatingTagline": {
+    "items": [
+      "Surgery, when survival can't wait.",
+      "No family should choose between treatment and survival.",
+      "Healing should never depend on a bank balance."
+    ]
+  },
   "footer": {
     "brandHeading": "Surgery Care",
     "brandTagline": "Promise",
@@ -57,5 +158,267 @@
     "label": "Language",
     "english": "English",
     "hindi": "हिन्दी"
+  },
+  "causesList": {
+    "eyebrow": "PUBLIC FUNDRAISERS",
+    "headingPrefix": "All campaigns on",
+    "headingHighlight": "Surgery Care Foundation",
+    "subheading": "Browse every live fundraiser, track progress, and open a campaign to donate directly.",
+    "showing": "Showing",
+    "campaignsOne": "{count} campaign",
+    "campaignsOther": "{count} campaigns",
+    "all": "All Causes",
+    "emptyHeading": "No active campaigns right now",
+    "emptyMessageDefault": "New verified cases are added regularly. In the meantime, you can still support our mission by donating to the foundation.",
+    "emptyMessageFiltered": "Try a different category, or check back soon. New verified cases are added regularly.",
+    "donateToFoundation": "Donate to the Foundation",
+    "fundedSuffix": "funded",
+    "ofGoal": "of ₹ {amount} goal",
+    "backerOne": "{count} backer",
+    "backerOther": "{count} backers",
+    "donateNow": "Donate Now",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "categories": {
+    "paediatric": "Paediatric",
+    "oncology": "Oncology",
+    "cardiac": "Cardiac",
+    "neurological": "Neurological",
+    "orthopaedic": "Orthopaedic",
+    "transplant": "Transplant",
+    "other": "Other"
+  },
+  "causeDetail": {
+    "loading": "Loading campaign details...",
+    "unableToLoadHeading": "Unable to load campaign",
+    "unableToLoadBody": "Campaign not found. It may have been removed or the link is incorrect.",
+    "helpPrefix": "Help",
+    "raisedOfGoal": "Raised of ₹{amount} Goal",
+    "fundedSuffix": "funded",
+    "fundedZero": "0% funded",
+    "fundedTiny": "<1% funded",
+    "generousBacker": "{count} generous backer",
+    "generousBackers": "{count} generous backers",
+    "donateNow": "Donate Now",
+    "shareThisCause": "Share this cause",
+    "shareAria": "Copy share link to clipboard",
+    "linkCopied": "Link copied to clipboard",
+    "linkCopyFailed": "Couldn't copy link, please copy from the address bar.",
+    "updating": "Updating...",
+    "savedForLater": "Saved for Later",
+    "saveCause": "Save Cause",
+    "saveRemovedToast": "Cause removed from your saved list.",
+    "saveAddedToast": "Cause saved for later.",
+    "saveFailedToast": "Unable to update saved causes.",
+    "fundsSecureNote": "Funds are securely processed and sent directly to the partnered medical facility.",
+    "casesVerifiedNote": "All cases are 100% verified by our expert medical board.",
+    "weAccept": "We Accept",
+    "watchTheStory": "Watch the Story",
+    "videoUnsupported": "Your browser does not support embedded video.",
+    "updatesHeading": "Updates from the team",
+    "viewAttachedDocument": "View attached document",
+    "updateKind": {
+      "ANNOUNCEMENT": "Announcement",
+      "PRE_SURGERY": "Pre-Surgery",
+      "SURGERY_DONE": "Surgery Done",
+      "RECOVERY": "Recovery",
+      "DISCHARGE": "Discharge",
+      "BILL_POSTED": "Bill Posted"
+    }
+  },
+  "checkout": {
+    "back": "← Back to Cause",
+    "heading": "Secure Checkout",
+    "selectAmount": "Select Donation Amount",
+    "otherAmount": "₹ Other Amount",
+    "personalDetails": "Personal Details",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email Address",
+    "anonymous": "Make my donation anonymous",
+    "razorpayNotice": "You'll be taken to Razorpay to complete your payment securely.",
+    "completeDonation": "Complete Donation of ₹{amount}",
+    "openingPayment": "Opening Payment...",
+    "secure": "256-bit Secure Encryption",
+    "summary": "Donation Summary",
+    "supporting": "Supporting",
+    "donationAmount": "Donation Amount",
+    "platformFee": "Platform Fee (0%)",
+    "total": "Total",
+    "campaignNotFound": "Campaign not found",
+    "errors": {
+      "firstNameRequired": "First name is required.",
+      "emailRequired": "Email address is required.",
+      "amountRequired": "Please select or enter a donation amount.",
+      "campaignNotLoaded": "Campaign details are not loaded yet.",
+      "captchaRequired": "Please complete the verification challenge before donating.",
+      "gatewayUnavailable": "Payment gateway is unavailable right now.",
+      "gatewayNotConfigured": "Payment gateway is not configured yet. Please try again later.",
+      "razorpayFailedToLoad": "Unable to load the payment gateway. Please try again.",
+      "verificationFailed": "Payment was captured, but confirmation failed. Please contact support.",
+      "generic": "Something went wrong. Please try again."
+    }
+  },
+  "thankYou": {
+    "heading": "Thank You!",
+    "successWithAmount": "Your generous donation of <b>₹{amount}</b> has been successfully processed. You have just made a massive difference in someone's life.",
+    "successNoAmount": "Your generous donation has been successfully processed. You have just made a massive difference in someone's life.",
+    "pendingWithAmount": "Your payment window has completed for <b>₹{amount}</b>. We'll email your receipt as soon as the payment is confirmed.",
+    "pendingNoAmount": "Your payment was submitted. We'll email your receipt as soon as the donation is confirmed.",
+    "receiptSent": "An email receipt has been sent to you.",
+    "receiptPending": "We will send your email receipt once payment is confirmed.",
+    "dashboard": "Dashboard",
+    "shareImpact": "Share Impact",
+    "shareText": "I just donated to a life-saving surgery on Surgery Care Foundation. Join me. Every contribution helps a patient get the care they need.",
+    "linkCopied": "Link copied to clipboard",
+    "shareFailed": "Could not share. Try copying the link manually."
+  },
+  "notFound": {
+    "heading": "Cause Not Found",
+    "body": "The cause you're looking for doesn't exist or may have been removed.",
+    "viewAll": "Browse All Causes"
+  },
+  "blogList": {
+    "heading": "Blog &",
+    "headingHighlight": "Awareness",
+    "subtitle": "Medical awareness, donor stories, campaign updates and resources.",
+    "empty": "No articles published yet. Please check back soon.",
+    "readArticle": "Read article"
+  },
+  "blogDetail": {
+    "loading": "Loading article...",
+    "notFound": "Blog post not found.",
+    "backToBlog": "← Back to blog",
+    "by": "by",
+    "shareArticle": "Share article"
+  },
+  "about": {
+    "heading": "About",
+    "headingHighlight": "Surgery Care Foundation",
+    "subtitle": "We bring quality surgery to every patient — verified, transparent, and on time.",
+    "missionLabel": "Our Mission",
+    "missionHeading": "Quality healthcare, accessible to every Indian patient",
+    "missionBody": "Surgery Care Foundation was started so that no patient has to delay life-saving treatment because of money. We verify each case, raise the funds, and work with partner hospitals end to end — from first consult to final follow-up.",
+    "whatWeDoLabel": "What We Do",
+    "whatWeDoHeading": "How we close the gap",
+    "verificationHeading": "Medical verification",
+    "verificationBody": "Every case is reviewed by our medical team before it goes live. Diagnosis, treatment plan, doctor and hospital are all verified.",
+    "fundraisingHeading": "Transparent fundraising",
+    "fundraisingBody": "Donations are tracked in real time. Every donor receives an instant receipt, and funds are released directly to the hospital — never to a personal account.",
+    "supportHeading": "End-to-end support",
+    "supportBody": "Our counsellors and field volunteers stay with each patient from admission through recovery and follow-up, so families never face the system alone.",
+    "trusteesLabel": "Trustees",
+    "trusteesHeading": "Our Board of Trustees",
+    "trusteesEmpty": "Trustee profiles will appear here soon.",
+    "hospitalsLabel": "Partners",
+    "hospitalsHeading": "Partner Hospitals",
+    "hospitalsEmpty": "Partner hospital information will appear here soon.",
+    "reportsLabel": "Reports",
+    "reportsHeading": "Annual Reports & Filings",
+    "reportsEmpty": "Annual reports will be published here.",
+    "complianceHeading": "Registrations & Compliance"
+  },
+  "contact": {
+    "heading": "Get in",
+    "headingHighlight": "Touch",
+    "subtitle": "We are here to help. Reach out to us for any queries regarding donations, fundraisers, or partnerships.",
+    "sendMessage": "Send us a message",
+    "firstName": "First Name",
+    "firstNamePlaceholder": "John",
+    "lastName": "Last Name",
+    "lastNamePlaceholder": "Doe",
+    "email": "Email Address",
+    "emailPlaceholder": "john@example.com",
+    "subject": "Subject",
+    "subjectPlaceholder": "E.g., Donation Query",
+    "message": "Message",
+    "messagePlaceholder": "How can we help you?",
+    "send": "Send Message",
+    "sending": "Sending...",
+    "successToast": "Message sent! We'll get back to you soon.",
+    "captchaRequiredToast": "Please complete the verification challenge before sending.",
+    "errorFallback": "Something went wrong. Please try again.",
+    "callUs": "Call Us",
+    "callHours": "Mon-Fri from 9am to 6pm.",
+    "corporateOffice": "Corporate Office",
+    "address": "1st Floor, Plot No. 06, Katol Road,\nFalke Layout, Kolbaswami Nagar,\nAkar Nagar, Nagpur,\nMaharashtra 440013, India"
+  },
+  "auth": {
+    "login": {
+      "welcomeBack": "Welcome Back",
+      "subtitle": "Log in to continue your impact.",
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "you@example.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "••••••••",
+      "forgotPassword": "Forgot Password?",
+      "signIn": "Sign In",
+      "signingIn": "Signing In...",
+      "noAccount": "Don't have an account?",
+      "signUpHere": "Sign up here",
+      "resetSuccess": "Password reset successfully. Please log in with your new password.",
+      "welcomeToast": "Welcome back, {name}! You're logged in successfully.",
+      "errorFallback": "Login failed. Please try again.",
+      "captchaRequiredError": "Please complete the verification challenge before signing in."
+    },
+    "register": {
+      "createAccount": "Create Account",
+      "subtitle": "Join us and start making an impact today.",
+      "firstNameLabel": "First Name",
+      "firstNamePlaceholder": "John",
+      "lastNameLabel": "Last Name",
+      "lastNamePlaceholder": "Doe",
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "you@example.com",
+      "phoneLabel": "Phone (Optional)",
+      "phonePlaceholder": "+91 98765 43210",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "••••••••",
+      "confirmPasswordLabel": "Confirm Password",
+      "createAccountButton": "Create Account",
+      "creatingAccount": "Creating Account...",
+      "haveAccount": "Already have an account?",
+      "logIn": "Log in",
+      "passwordsMismatch": "Passwords do not match.",
+      "captchaRequiredError": "Please complete the verification challenge before creating your account.",
+      "welcomeToast": "Welcome, {name}! Your account has been created.",
+      "errorFallback": "Registration failed. Please try again."
+    },
+    "forgot": {
+      "heading": "Forgot Password",
+      "subtitle": "Enter your email and we'll send you a link to reset your password.",
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "you@example.com",
+      "submit": "Send Reset Link",
+      "submitting": "Sending...",
+      "successHeading": "Check your email",
+      "successBody": "If an account exists for that email, a password reset link has been sent.",
+      "backToLogin": "← Back to login",
+      "errorFallback": "Something went wrong. Please try again."
+    },
+    "reset": {
+      "heading": "Reset Password",
+      "subtitle": "Choose a new password for your account.",
+      "newPasswordLabel": "New Password",
+      "confirmPasswordLabel": "Confirm New Password",
+      "submit": "Reset Password",
+      "submitting": "Resetting...",
+      "passwordsMismatch": "Passwords do not match.",
+      "missingToken": "Reset token missing or invalid. Please request a new link.",
+      "successHeading": "Password updated",
+      "successBody": "Your password has been changed. You can now log in with your new password.",
+      "goToLogin": "Go to login",
+      "errorFallback": "Something went wrong. Please try again."
+    },
+    "verifyEmail": {
+      "verifying": "Verifying your email...",
+      "successHeading": "Email verified",
+      "successBody": "Thank you! Your email has been verified. You can now log in.",
+      "errorHeading": "Verification failed",
+      "errorBody": "This link is invalid or has expired. Please request a new one.",
+      "goToLogin": "Go to login",
+      "missingToken": "Verification token missing or invalid."
+    }
   }
 }

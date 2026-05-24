@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { formatINR } from "@/lib/format";
 import { Container } from "@/components/ui/container";
 import { Heading } from "@/components/ui/heading";
@@ -12,6 +13,7 @@ import { useToast } from "@/components/ui/toast";
 import { CheckCircleIcon, GridIcon, ShareIcon } from "@/components/ui/icons";
 
 export default function ThankYouPage() {
+  const t = useTranslations("thankYou");
   const searchParams = useSearchParams();
   const amountParam = searchParams.get("amount");
   const status = searchParams.get("status");
@@ -34,7 +36,7 @@ export default function ThankYouPage() {
   async function handleShare() {
     const shareUrl =
       typeof window !== "undefined" ? `${window.location.origin}/causes` : "/causes";
-    const shareText = "I just donated to a life-saving surgery on Surgery Care Foundation. Join me. Every contribution helps a patient get the care they need.";
+    const shareText = t("shareText");
     try {
       if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
         await navigator.share({
@@ -46,14 +48,25 @@ export default function ThankYouPage() {
       }
       if (typeof navigator !== "undefined" && navigator.clipboard) {
         await navigator.clipboard.writeText(shareUrl);
-        toast("Link copied to clipboard", "success");
+        toast(t("linkCopied"), "success");
       }
     } catch (err) {
-      // User dismissed the native share sheet — silent.
       if ((err as DOMException)?.name === "AbortError") return;
-      toast("Could not share. Try copying the link manually.", "error");
+      toast(t("shareFailed"), "error");
     }
   }
+
+  const renderBody = () => {
+    const hasAmount = amount && amount > 0;
+    const key =
+      status === "success"
+        ? hasAmount ? "successWithAmount" : "successNoAmount"
+        : hasAmount ? "pendingWithAmount" : "pendingNoAmount";
+    return t.rich(key, {
+      amount: hasAmount ? formatINR(amount as number) : "",
+      b: (chunks) => <span className="font-bold text-accent">{chunks}</span>,
+    });
+  };
 
   return (
     <section className="bg-surface-page py-12 md:py-32">
@@ -66,47 +79,18 @@ export default function ThankYouPage() {
 
           <div className="rounded-2xl border border-surface-border bg-white px-6 pb-8 pt-12 shadow-card sm:px-8 sm:pt-14">
             <Heading level="h2" as="h1" className="mb-4">
-              Thank You!
+              {t("heading")}
             </Heading>
 
             <Text variant="secondary" className="mb-6">
-              {status === "success" && amount && amount > 0 ? (
-                <>
-                  Your generous donation of{" "}
-                  <span className="font-bold text-accent">
-                    &#8377;{formatINR(amount)}
-                  </span>{" "}
-                  has been successfully processed. You have just made a massive
-                  difference in someone&apos;s life.
-                </>
-              ) : status === "success" ? (
-                <>
-                  Your generous donation has been successfully processed. You have
-                  just made a massive difference in someone&apos;s life.
-                </>
-              ) : amount && amount > 0 ? (
-                <>
-                  Your payment window has completed for{" "}
-                  <span className="font-bold text-accent">
-                    &#8377;{formatINR(amount)}
-                  </span>
-                  . We&apos;ll email your receipt as soon as the payment is confirmed.
-                </>
-              ) : (
-                <>
-                  Your payment was submitted. We&apos;ll email your receipt as soon as the
-                  donation is confirmed.
-                </>
-              )}
+              {renderBody()}
             </Text>
 
             {/* Receipt notice */}
             <div className="mb-8 rounded-xl bg-surface-page px-4 py-4 sm:px-6">
               <p className="flex items-center justify-center gap-2 text-btn font-bold text-primary">
                 <span className="text-red-500" aria-hidden="true">&#10084;</span>
-                {status === "success"
-                  ? "An email receipt has been sent to you."
-                  : "We will send your email receipt once payment is confirmed."}
+                {status === "success" ? t("receiptSent") : t("receiptPending")}
               </p>
             </div>
 
@@ -117,7 +101,7 @@ export default function ThankYouPage() {
                 className={buttonVariants({ variant: "secondary", className: "w-full gap-2 sm:w-auto" })}
               >
                 <GridIcon className="size-4" />
-                Dashboard
+                {t("dashboard")}
               </Link>
               <button
                 type="button"
@@ -125,7 +109,7 @@ export default function ThankYouPage() {
                 className={buttonVariants({ variant: "outline", className: "w-full gap-2 sm:w-auto" })}
               >
                 <ShareIcon className="size-4" />
-                Share Impact
+                {t("shareImpact")}
               </button>
             </div>
           </div>

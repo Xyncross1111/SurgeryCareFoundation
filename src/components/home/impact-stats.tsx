@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/container";
 import { Heading } from "@/components/ui/heading";
 import { Text } from "@/components/ui/text";
@@ -14,6 +15,7 @@ interface ImpactStatsProps {
 }
 
 export function ImpactStats({ initialStats }: ImpactStatsProps = {}) {
+  const t = useTranslations("impactStats");
   const { data: liveStats } = useApi(() => publicService.getStats(), []);
   const stats = liveStats ?? initialStats ?? null;
 
@@ -43,7 +45,7 @@ export function ImpactStats({ initialStats }: ImpactStatsProps = {}) {
             <div className="mb-8 inline-flex items-center gap-3">
               <span className="size-3 rounded-full bg-accent-mint shadow-[0px_0px_10px_0px_#00eea3]" />
               <Heading level="h4" as="h2" className="tracking-[-0.6px]">
-                Total Raised Fund
+                {t("totalRaisedFund")}
               </Heading>
             </div>
 
@@ -53,7 +55,7 @@ export function ImpactStats({ initialStats }: ImpactStatsProps = {}) {
                   {raisedDisplay}
                 </p>
                 <Text as="span" variant="muted" size="label" className="mt-1 uppercase tracking-[1.2px] text-slate-medium">
-                  Raised
+                  {t("raised")}
                 </Text>
               </div>
               <div className="text-right">
@@ -61,14 +63,14 @@ export function ImpactStats({ initialStats }: ImpactStatsProps = {}) {
                   {goalDisplay}
                 </p>
                 <Text as="span" variant="muted" size="label" className="mt-1 uppercase tracking-[1.2px] text-slate-medium">
-                  Goal
+                  {t("goal")}
                 </Text>
               </div>
             </div>
 
             <div className="mt-4 flex items-center justify-between gap-3">
               <Text as="span" variant="muted" size="label" className="uppercase tracking-[1.2px] text-slate-medium">
-                Progress
+                {t("progress")}
               </Text>
               <p className="text-btn font-black text-accent">{fundedLabel}</p>
             </div>
@@ -83,13 +85,13 @@ export function ImpactStats({ initialStats }: ImpactStatsProps = {}) {
               <div>
                 <p className="text-lg font-black text-primary">{donorsCount.toLocaleString("en-IN")}</p>
                 <Text as="span" variant="muted" size="label" className="uppercase tracking-[1.2px] text-slate-medium">
-                  Donors
+                  {t("donors")}
                 </Text>
               </div>
               <div>
                 <p className="text-lg font-black text-primary">{campaignsCount}</p>
                 <Text as="span" variant="muted" size="label" className="uppercase tracking-[1.2px] text-slate-medium">
-                  Campaigns
+                  {t("campaigns")}
                 </Text>
               </div>
             </div>
@@ -99,21 +101,19 @@ export function ImpactStats({ initialStats }: ImpactStatsProps = {}) {
           <div className="border-t border-surface-border pt-6 md:border-t-0 md:pl-10 md:pt-0">
             <div className="mb-3 flex gap-3">
               <span className="rounded-full bg-primary px-3 py-1 text-[11.2px] font-bold uppercase tracking-[0.56px] text-white">
-                Year {currentYear}
+                {t("year", { year: currentYear })}
               </span>
               <span className="rounded-full bg-surface-green px-3 py-1 text-[11.2px] font-bold uppercase tracking-[0.56px] text-accent">
-                Healthcare
+                {t("healthcare")}
               </span>
             </div>
 
             <Heading level="h3" as="h2" className="mb-4 text-[40px] leading-[50px] tracking-[-1px]">
-              How Your Support Makes a Difference
+              {t("howSupportHeading")}
             </Heading>
 
             <Text variant="default" className="text-[18px] leading-[29.25px]">
-              Every donation funds a verified surgical case at a partnered
-              hospital. We stay with each patient from counselling through
-              recovery.
+              {t("howSupportBody")}
             </Text>
           </div>
         </div>
