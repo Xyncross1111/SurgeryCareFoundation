@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Heading } from "@/components/ui/heading";
 import { Text } from "@/components/ui/text";
 import { Input } from "@/components/ui/input";
@@ -12,6 +13,7 @@ import { authService } from "@/services/auth.service";
 import { ApiError } from "@/lib/api-error";
 
 export default function ForgotPasswordPage() {
+  const t = useTranslations("auth.forgot");
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -26,7 +28,7 @@ export default function ForgotPasswordPage() {
       await authService.forgotPassword({ email });
       setIsSuccess(true);
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Something went wrong. Please try again.");
+      setError(err instanceof ApiError ? err.message : t("errorFallback"));
     } finally {
       setIsSubmitting(false);
     }
@@ -51,10 +53,10 @@ export default function ForgotPasswordPage() {
       <div className="flex items-center justify-center bg-surface-page px-4 py-16">
         <div className="w-full max-w-md">
           <Heading level="h2" as="h1" className="mb-3">
-            Forgot Password
+            {t("heading")}
           </Heading>
           <Text variant="secondary" size="body-lg" className="mb-10">
-            Enter your email and we&apos;ll send you a reset link.
+            {t("subtitle")}
           </Text>
 
           {isSuccess ? (
@@ -63,17 +65,16 @@ export default function ForgotPasswordPage() {
                 <MailIcon className="size-7 text-accent" />
               </div>
               <Heading level="h4" as="h2" className="mb-2">
-                Check Your Email
+                {t("successHeading")}
               </Heading>
               <Text variant="secondary">
-                We&apos;ve sent a password reset link to <strong>{email}</strong>.
-                Please check your inbox and follow the instructions.
+                {t("successBody")}
               </Text>
               <Link
                 href="/login"
                 className="mt-6 inline-block font-bold text-accent transition-colors hover:text-accent-green"
               >
-                Back to Login
+                {t("backToLogin")}
               </Link>
             </div>
           ) : (
@@ -86,9 +87,9 @@ export default function ForgotPasswordPage() {
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <Input
-                  label="Email Address"
+                  label={t("emailLabel")}
                   type="email"
-                  placeholder="you@example.com"
+                  placeholder={t("emailPlaceholder")}
                   icon={<MailIcon className="size-5" />}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -102,18 +103,17 @@ export default function ForgotPasswordPage() {
                   className="w-full gap-2"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "Sending..." : "Send Reset Link"}
+                  {isSubmitting ? t("submitting") : t("submit")}
                   {!isSubmitting && <ArrowRightIcon className="size-5" />}
                 </Button>
               </form>
 
               <p className="mt-6 text-center text-body text-slate-medium">
-                Remember your password?{" "}
                 <Link
                   href="/login"
                   className="font-bold text-accent transition-colors hover:text-accent-green"
                 >
-                  Log in
+                  {t("backToLogin")}
                 </Link>
               </p>
             </>

@@ -4,6 +4,7 @@ import { Suspense, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Heading } from "@/components/ui/heading";
 import { Text } from "@/components/ui/text";
 import { Input } from "@/components/ui/input";
@@ -13,6 +14,8 @@ import { authService } from "@/services/auth.service";
 import { ApiError } from "@/lib/api-error";
 
 function ResetPasswordForm() {
+  const t = useTranslations("auth.reset");
+  const tLogin = useTranslations("auth.login");
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token") ?? "";
@@ -27,12 +30,12 @@ function ResetPasswordForm() {
     setError("");
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+      setError(t("passwordsMismatch"));
       return;
     }
 
     if (!token) {
-      setError("Invalid or missing reset token.");
+      setError(t("missingToken"));
       return;
     }
 
@@ -41,7 +44,7 @@ function ResetPasswordForm() {
       await authService.resetPassword({ token, password });
       router.push("/login?reset=success");
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Failed to reset password. Please try again.");
+      setError(err instanceof ApiError ? err.message : t("errorFallback"));
     } finally {
       setIsSubmitting(false);
     }
@@ -50,10 +53,10 @@ function ResetPasswordForm() {
   return (
     <div className="w-full max-w-md">
       <Heading level="h2" as="h1" className="mb-3">
-        Reset Password
+        {t("heading")}
       </Heading>
       <Text variant="secondary" size="body-lg" className="mb-10">
-        Enter your new password below.
+        {t("subtitle")}
       </Text>
 
       {error && (
@@ -64,7 +67,7 @@ function ResetPasswordForm() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <Input
-          label="New Password"
+          label={t("newPasswordLabel")}
           type="password"
           placeholder="••••••••"
           icon={<LockIcon className="size-5" />}
@@ -75,7 +78,7 @@ function ResetPasswordForm() {
         />
 
         <Input
-          label="Confirm New Password"
+          label={t("confirmPasswordLabel")}
           type="password"
           placeholder="••••••••"
           icon={<LockIcon className="size-5" />}
@@ -92,18 +95,17 @@ function ResetPasswordForm() {
           className="w-full gap-2"
           disabled={isSubmitting}
         >
-          {isSubmitting ? "Resetting..." : "Reset Password"}
+          {isSubmitting ? t("submitting") : t("submit")}
           {!isSubmitting && <ArrowRightIcon className="size-5" />}
         </Button>
       </form>
 
       <p className="mt-6 text-center text-body text-slate-medium">
-        Remember your password?{" "}
         <Link
           href="/login"
           className="font-bold text-accent transition-colors hover:text-accent-green"
         >
-          Log in
+          {tLogin("signIn")}
         </Link>
       </p>
     </div>

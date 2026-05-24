@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useTranslations } from "next-intl";
 import { PageHero } from "@/components/shared/page-hero";
 import { TrustStrip } from "@/components/ui/trust-strip";
 import { Container } from "@/components/ui/container";
@@ -18,6 +19,7 @@ import {
 } from "@/components/shared/turnstile-widget";
 
 export default function ContactClient() {
+  const t = useTranslations("contact");
   const { toast } = useToast();
 
   const [firstName, setFirstName] = useState("");
@@ -33,7 +35,7 @@ export default function ContactClient() {
     e.preventDefault();
 
     if (captchaRequired && !captchaToken) {
-      toast("Please complete the verification challenge before sending.", "error");
+      toast(t("captchaRequiredToast"), "error");
       return;
     }
 
@@ -48,7 +50,7 @@ export default function ContactClient() {
         message,
         ...(captchaToken ? { captchaToken } : {}),
       });
-      toast("Message sent! We'll get back to you soon.", "success");
+      toast(t("successToast"), "success");
       setFirstName("");
       setLastName("");
       setEmail("");
@@ -56,7 +58,7 @@ export default function ContactClient() {
       setMessage("");
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : "Something went wrong. Please try again.";
+        err instanceof Error ? err.message : t("errorFallback");
       toast(errorMessage, "error");
     } finally {
       setIsSubmitting(false);
@@ -66,9 +68,9 @@ export default function ContactClient() {
   return (
     <>
       <PageHero
-        title="Get in"
-        highlight="Touch"
-        subtitle="We are here to help. Reach out to us for any queries regarding donations, fundraisers, or partnerships."
+        title={t("heading")}
+        highlight={t("headingHighlight")}
+        subtitle={t("subtitle")}
       />
       <TrustStrip />
 
@@ -78,40 +80,40 @@ export default function ContactClient() {
             {/* Contact Form */}
             <div className="rounded-[40px] border border-surface-subtle bg-white p-8 shadow-[0px_20px_60px_0px_rgba(1,74,98,0.08)] md:p-[50px]">
               <Heading level="h3" as="h2" className="mb-8 text-[30px] leading-[36px]">
-                Send us a message
+                {t("sendMessage")}
               </Heading>
 
               <form className="space-y-8" onSubmit={handleSubmit}>
                 <div className="grid gap-6 sm:grid-cols-2">
                   <Input
-                    label="First Name"
-                    placeholder="John"
+                    label={t("firstName")}
+                    placeholder={t("firstNamePlaceholder")}
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                   />
                   <Input
-                    label="Last Name"
-                    placeholder="Doe"
+                    label={t("lastName")}
+                    placeholder={t("lastNamePlaceholder")}
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                   />
                 </div>
                 <Input
-                  label="Email Address"
+                  label={t("email")}
                   type="email"
-                  placeholder="john@example.com"
+                  placeholder={t("emailPlaceholder")}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
                 <Input
-                  label="Subject"
-                  placeholder="E.g., Donation Query"
+                  label={t("subject")}
+                  placeholder={t("subjectPlaceholder")}
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
                 />
                 <Textarea
-                  label="Message"
-                  placeholder="How can we help you?"
+                  label={t("message")}
+                  placeholder={t("messagePlaceholder")}
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                 />
@@ -123,7 +125,7 @@ export default function ContactClient() {
                   disabled={isSubmitting || (captchaRequired && !captchaToken)}
                   className="gap-2 rounded-[14px] text-[16px] font-black"
                 >
-                  {isSubmitting ? "Sending..." : "Send Message"}
+                  {isSubmitting ? t("sending") : t("send")}
                   {!isSubmitting && <SendIcon className="size-4" />}
                 </Button>
               </form>
@@ -138,10 +140,10 @@ export default function ContactClient() {
                 </span>
                 <div>
                   <Heading level="h4" as="h3" className="mb-1 text-[20px]">
-                    Call Us
+                    {t("callUs")}
                   </Heading>
                   <Text variant="secondary" className="mb-2 text-[16px]">
-                    Mon-Fri from 9am to 6pm.
+                    {t("callHours")}
                   </Text>
                   <a
                     href="tel:+918815935091"
@@ -158,13 +160,10 @@ export default function ContactClient() {
                   <MapPinIcon className="size-7 text-white" />
                 </span>
                 <Heading level="h4" as="h3" className="mb-4 text-[24px] leading-[32px] text-white">
-                  Corporate Office
+                  {t("corporateOffice")}
                 </Heading>
-                <Text className="text-[16px] leading-[26px] text-[rgba(236,253,245,0.85)]">
-                  1st Floor, Plot No. 06, Katol Road,<br />
-                  Falke Layout, Kolbaswami Nagar,<br />
-                  Akar Nagar, Nagpur,<br />
-                  Maharashtra 440013, India
+                <Text className="whitespace-pre-line text-[16px] leading-[26px] text-[rgba(236,253,245,0.85)]">
+                  {t("address")}
                 </Text>
               </div>
             </div>

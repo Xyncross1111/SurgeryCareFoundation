@@ -4,6 +4,7 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Heading } from "@/components/ui/heading";
 import { Text } from "@/components/ui/text";
 import { Input } from "@/components/ui/input";
@@ -19,6 +20,7 @@ import {
 } from "@/components/shared/turnstile-widget";
 
 function LoginForm() {
+  const t = useTranslations("auth.login");
   const { login, user, isLoading, isAuthenticated } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -52,7 +54,7 @@ function LoginForm() {
     setError("");
 
     if (captchaRequired && !captchaToken) {
-      setError("Please complete the verification challenge before signing in.");
+      setError(t("captchaRequiredError"));
       return;
     }
 
@@ -66,10 +68,10 @@ function LoginForm() {
       });
       const redirect = searchParams.get("redirect") || getDefaultAppRoute(session.roles);
       const greetName = session.firstName?.trim() || session.email;
-      toast(`Welcome back, ${greetName}! You're logged in successfully.`, "success");
+      toast(t("welcomeToast", { name: greetName }), "success");
       router.push(redirect);
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Login failed. Please try again.");
+      setError(err instanceof ApiError ? err.message : t("errorFallback"));
     } finally {
       setIsSubmitting(false);
     }
@@ -78,15 +80,15 @@ function LoginForm() {
   return (
     <div className="w-full max-w-md">
       <Heading level="h2" as="h1" className="mb-3">
-        Welcome Back
+        {t("welcomeBack")}
       </Heading>
       <Text variant="secondary" size="body-lg" className="mb-10">
-        Log in to continue your impact.
+        {t("subtitle")}
       </Text>
 
       {resetSuccess && (
         <div className="mb-6 rounded-xl border border-accent/20 bg-accent/5 px-4 py-3 text-body text-accent">
-          Password reset successfully. Please log in with your new password.
+          {t("resetSuccess")}
         </div>
       )}
 
@@ -98,9 +100,9 @@ function LoginForm() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <Input
-          label="Email Address"
+          label={t("emailLabel")}
           type="email"
-          placeholder="you@example.com"
+          placeholder={t("emailPlaceholder")}
           icon={<MailIcon className="size-5" />}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -110,18 +112,18 @@ function LoginForm() {
         <div>
           <div className="mb-2 flex items-center justify-between">
             <label className="text-label uppercase text-slate-medium">
-              Password
+              {t("passwordLabel")}
             </label>
             <Link
               href="/forgot-password"
               className="text-label font-bold text-accent transition-colors hover:text-accent-green"
             >
-              Forgot Password?
+              {t("forgotPassword")}
             </Link>
           </div>
           <Input
             type="password"
-            placeholder="••••••••"
+            placeholder={t("passwordPlaceholder")}
             icon={<LockIcon className="size-5" />}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -138,18 +140,18 @@ function LoginForm() {
           className="w-full gap-2"
           disabled={isSubmitting || (captchaRequired && !captchaToken)}
         >
-          {isSubmitting ? "Signing In..." : "Sign In"}
+          {isSubmitting ? t("signingIn") : t("signIn")}
           {!isSubmitting && <ArrowRightIcon className="size-5" />}
         </Button>
       </form>
 
       <p className="mt-6 text-center text-body text-slate-medium">
-        Don&apos;t have an account?{" "}
+        {t("noAccount")}{" "}
         <Link
           href="/register"
           className="font-bold text-accent transition-colors hover:text-accent-green"
         >
-          Sign up here
+          {t("signUpHere")}
         </Link>
       </p>
     </div>

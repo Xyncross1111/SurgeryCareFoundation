@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { PageHero } from "@/components/shared/page-hero";
 import { TrustStrip } from "@/components/ui/trust-strip";
 import { Container } from "@/components/ui/container";
@@ -15,6 +16,7 @@ import { publicService } from "@/services/public.service";
 import type { BlogPost } from "@/types/content";
 
 export default function BlogListClient() {
+  const t = useTranslations("blogList");
   const { data: posts, isLoading, error, refetch } = useApi<BlogPost[]>(
     () => publicService.getBlogPosts(),
     [],
@@ -23,9 +25,9 @@ export default function BlogListClient() {
   return (
     <>
       <PageHero
-        title="Latest"
-        highlight="News & Updates"
-        subtitle="Read about recent impact, medical insights, and inspiring patient stories."
+        title={t("heading")}
+        highlight={t("headingHighlight")}
+        subtitle={t("subtitle")}
       />
       <TrustStrip />
 
@@ -33,12 +35,12 @@ export default function BlogListClient() {
         <Container>
           {isLoading ? (
             <div className="flex justify-center py-16">
-              <Text variant="secondary">Loading articles...</Text>
+              <Text variant="secondary">{t("loading")}</Text>
             </div>
           ) : error ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <Heading level="h4" as="h2" className="mb-2">
-                Unable to load blog posts
+                {t("errorHeading")}
               </Heading>
               <Text variant="secondary" className="mb-6 max-w-lg">
                 {error}
@@ -48,12 +50,12 @@ export default function BlogListClient() {
                 onClick={refetch}
                 className="rounded-full bg-primary px-6 py-3 text-white"
               >
-                Retry
+                {t("retry")}
               </button>
             </div>
           ) : !posts || posts.length === 0 ? (
             <div className="flex justify-center py-16">
-              <Text variant="secondary">No blog posts are published yet.</Text>
+              <Text variant="secondary">{t("empty")}</Text>
             </div>
           ) : (
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -106,7 +108,7 @@ export default function BlogListClient() {
                       href={`/blog/${post.slug}`}
                       className="inline-flex items-center gap-1 text-label font-black uppercase tracking-wider text-primary transition-colors hover:text-accent"
                     >
-                      Read Article
+                      {t("readArticle")}
                       <span aria-hidden="true">&rarr;</span>
                     </Link>
                   </CardContent>

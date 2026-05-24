@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { PageHero } from "@/components/shared/page-hero";
 import { TrustStrip } from "@/components/ui/trust-strip";
 import { Container } from "@/components/ui/container";
@@ -12,6 +13,7 @@ import { useApi } from "@/hooks/use-api";
 import { publicService } from "@/services/public.service";
 
 export default function BlogDetailClient({ slug }: { slug: string }) {
+  const t = useTranslations("blogDetail");
   const { data: post, isLoading, error } = useApi(
     () => publicService.getBlogPost(slug),
     [slug],
@@ -21,7 +23,7 @@ export default function BlogDetailClient({ slug }: { slug: string }) {
     return (
       <section className="py-20">
         <Container>
-          <Text variant="secondary">Loading article...</Text>
+          <Text variant="secondary">{t("loading")}</Text>
         </Container>
       </section>
     );
@@ -31,7 +33,7 @@ export default function BlogDetailClient({ slug }: { slug: string }) {
     return (
       <section className="py-20">
         <Container className="max-w-3xl">
-          <Text variant="secondary">{error || "Blog post not found."}</Text>
+          <Text variant="secondary">{error || t("notFound")}</Text>
         </Container>
       </section>
     );
@@ -58,7 +60,7 @@ export default function BlogDetailClient({ slug }: { slug: string }) {
             </div>
             {post.authorName && (
               <Text as="span" variant="muted" size="label" className="normal-case tracking-normal">
-                By {post.authorName}
+                {t("by")} {post.authorName}
               </Text>
             )}
           </div>
@@ -88,7 +90,7 @@ export default function BlogDetailClient({ slug }: { slug: string }) {
               className="inline-flex items-center gap-2 text-btn font-bold text-primary transition-colors hover:text-accent"
             >
               <ArrowRightIcon className="size-4 rotate-180" />
-              Back to All Articles
+              {t("backToBlog")}
             </Link>
           </div>
         </Container>

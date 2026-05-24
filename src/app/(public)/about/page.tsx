@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { getTranslations } from "next-intl/server";
 import { PageHero } from "@/components/shared/page-hero";
 
 export const metadata: Metadata = {
@@ -22,132 +23,42 @@ import {
   ShieldCheckIcon,
 } from "@/components/ui/icons";
 
-const CONDITIONS = [
-  {
-    group: "Paediatric Surgery",
-    items: [
-      "Burns (children & adults)",
-      "Cleft lip & palate",
-      "Cystic hygroma (lymphangioma)",
-      "Spina bifida & meningomyelocele",
-      "Encephalocele",
-      "Hydrocephalus",
-      "Omphalocele",
-      "Bladder exstrophy",
-      "Ectopia cordis",
-      "Conjoined twins",
-      "Torticollis & neck abnormalities",
-      "Achalasia",
-    ],
-  },
-  {
-    group: "Oncology & Tumors",
-    items: [
-      "Neuroblastoma",
-      "Neuroectodermal tumour",
-      "Visible oncology cases",
-      "Visible tumours",
-      "Huge abdominal tumours",
-      "Von Recklinghausen’s disease (Neurofibromatosis 1)",
-    ],
-  },
-] as const;
+export default async function AboutPage() {
+  const t = await getTranslations("about");
 
-const VISION_STATEMENT =
-  "To create an inclusive healthcare support network where no patient is denied treatment because of financial hardship, lack of awareness, or limited access to medical resources.";
+  const VALUES = [
+    { icon: TargetIcon, title: t("valueDirectImpactTitle"), description: t("valueDirectImpactDescription") },
+    { icon: ShieldIcon, title: t("valueVerifiedCasesTitle"), description: t("valueVerifiedCasesDescription") },
+    { icon: HeartHandshakeIcon, title: t("valueEndToEndTitle"), description: t("valueEndToEndDescription") },
+  ];
 
-const MISSION_POINTS = [
-  "Support financially vulnerable patients requiring surgeries.",
-  "Build a community-powered healthcare assistance system.",
-  "Connect patients with hospitals, doctors and healthcare experts.",
-  "Promote healthcare awareness and preventive care education.",
-  "Encourage public participation in humanitarian healthcare initiatives.",
-  "Create transparent and trustworthy healthcare support processes.",
-  "Empower families with guidance during medical emergencies.",
-] as const;
+  const CONDITIONS = [
+    { group: t("conditionsPaediatricGroup"), items: t.raw("conditionsPaediatricItems") as string[] },
+    { group: t("conditionsOncologyGroup"), items: t.raw("conditionsOncologyItems") as string[] },
+  ];
 
-const CLOSING_TAGLINE =
-  "To stand beside every patient when they need humanity the most.";
+  const MISSION_POINTS = t.raw("missionPoints") as string[];
+  const NEVER_DO = t.raw("neverDoItems") as string[];
 
-const VALUES = [
-  {
-    icon: TargetIcon,
-    title: "Direct Impact",
-    description:
-      "Every donation funds a verified surgical case at a partnered hospital.",
-  },
-  {
-    icon: ShieldIcon,
-    title: "Verified Cases",
-    description:
-      "Each medical case is reviewed by our team and admitted to a NABH-accredited hospital.",
-  },
-  {
-    icon: HeartHandshakeIcon,
-    title: "End-to-End Support",
-    description:
-      "From counselling and admission to post-operative recovery, our team stays with every patient.",
-  },
-] as const;
+  const DONATION_FLOW = [
+    { step: "01", title: t("donationStep1Title"), description: t("donationStep1Description") },
+    { step: "02", title: t("donationStep2Title"), description: t("donationStep2Description") },
+    { step: "03", title: t("donationStep3Title"), description: t("donationStep3Description") },
+  ];
 
-const DONATION_FLOW = [
-  {
-    step: "01",
-    title: "Case verified",
-    description:
-      "Our team reviews medical records, hospital estimates and the family's situation before any campaign goes live.",
-  },
-  {
-    step: "02",
-    title: "Donation collected",
-    description:
-      "Donors contribute through verified payment gateways. Every contribution is tracked against the patient's goal in real time.",
-  },
-  {
-    step: "03",
-    title: "Paid to the hospital",
-    description:
-      "Funds are released directly to the hospital that performs the surgery. They never enter a patient or family bank account.",
-  },
-] as const;
+  const REGISTRATIONS = [
+    { label: t("regNgoLabel"), status: t("regNgoStatus"), description: t("regNgoDescription") },
+    { label: t("reg12aLabel"), status: t("reg12aStatus"), description: t("reg12aDescription") },
+    { label: t("reg80gLabel"), status: t("reg80gStatus"), description: t("reg80gDescription") },
+    { label: t("regPanLabel"), status: t("regPanStatus"), description: t("regPanDescription") },
+  ];
 
-const NEVER_DO = [
-  "We do not charge patients.",
-  "We do not charge hospitals.",
-  "We do not take commission from any party.",
-  "We do not sell treatment packages.",
-] as const;
-
-const REGISTRATIONS = [
-  {
-    label: "NGO Registration",
-    status: "Registered",
-    description: "Surgery Care Foundation is a registered non-profit entity under Indian law.",
-  },
-  {
-    label: "12A Certificate",
-    status: "Held",
-    description: "Income-tax exemption status under Section 12A of the Income Tax Act.",
-  },
-  {
-    label: "80G Certificate",
-    status: "Held",
-    description: "Donors receive tax-deduction benefit under Section 80G on every donation.",
-  },
-  {
-    label: "PAN",
-    status: "On File",
-    description: "Permanent Account Number available for compliance verification.",
-  },
-] as const;
-
-export default function AboutPage() {
   return (
     <>
       <PageHero
-        title="No family should choose between"
-        highlight="treatment and survival."
-        subtitle="Surgery Care connects patients to top hospitals across India and ensures every patient, affordable or not, receives high-quality surgical treatment."
+        title={t("heroTitle")}
+        highlight={t("heroHighlight")}
+        subtitle={t("heroSubtitle")}
       />
 
       <ImpactStats />
@@ -171,22 +82,19 @@ export default function AboutPage() {
               <div className="mb-3 flex items-center gap-3">
                 <span className="h-[3px] w-8 rounded-full bg-accent-green" />
                 <Text as="span" size="label" className="font-black tracking-[1.4px] text-accent-green">
-                  About the Company
+                  {t("companyLabel")}
                 </Text>
               </div>
 
               <Heading level="h2" className="mb-6">
-                Healthcare for{" "}
+                {t("companyHeadingPrefix")}{" "}
                 <span className="bg-gradient-to-b from-accent-green to-accent-mint bg-clip-text text-transparent">
-                  every class of patient
+                  {t("companyHeadingHighlight")}
                 </span>
               </Heading>
 
               <Text variant="secondary" size="body-lg" className="mb-10">
-                As a healthcare-focused organisation, our main focus is to improve the
-                health of every patient by consulting and treating them at top hospitals
-                with strong team coordination, for both affordable and
-                non-affordable patients alike.
+                {t("companyBody")}
               </Text>
 
               <div className="space-y-6">
@@ -213,14 +121,13 @@ export default function AboutPage() {
           <div className="rounded-[32px] border border-surface-border bg-white p-8 shadow-card md:p-10">
             <div className="mb-6 max-w-2xl">
               <Text size="label" className="mb-3 text-accent">
-                CONDITIONS WE TREAT
+                {t("conditionsLabel")}
               </Text>
               <Heading level="h2" as="h2" className="mb-3">
-                Surgical care across paediatric, oncology and complex cases
+                {t("conditionsHeading")}
               </Heading>
               <Text variant="secondary">
-                Surgery Care supports patients with a wide range of surgical needs.
-                Below are the conditions our network of partner hospitals regularly treats.
+                {t("conditionsBody")}
               </Text>
             </div>
 
@@ -253,27 +160,27 @@ export default function AboutPage() {
           {/* Vision */}
           <div className="mx-auto mb-16 max-w-4xl text-center">
             <Text size="label" className="mb-3 tracking-[1.4px] font-black text-accent">
-              OUR VISION
+              {t("visionLabel")}
             </Text>
             <Heading level="h2" className="mb-6">
-              An inclusive{" "}
+              {t("visionHeadingPrefix")}{" "}
               <span className="bg-gradient-to-b from-accent-green to-accent-mint bg-clip-text text-transparent">
-                healthcare support network
+                {t("visionHeadingHighlight")}
               </span>
             </Heading>
             <Text variant="secondary" size="body-lg" className="leading-relaxed">
-              {VISION_STATEMENT}
+              {t("visionStatement")}
             </Text>
           </div>
 
           {/* Mission */}
           <div className="mx-auto mb-10 max-w-2xl text-center">
             <Text size="label" className="mb-3 tracking-[1.4px] font-black text-accent">
-              OUR MISSION
+              {t("missionLabel")}
             </Text>
             <Heading level="h2" className="mb-4">
-              Seven commitments,{" "}
-              <span className="text-accent">one promise</span>
+              {t("missionHeadingPrefix")}{" "}
+              <span className="text-accent">{t("missionHeadingHighlight")}</span>
             </Heading>
           </div>
 
@@ -298,7 +205,7 @@ export default function AboutPage() {
           <div className="mx-auto mt-14 max-w-3xl text-center">
             <p className="text-[22px] font-black leading-snug text-primary md:text-[28px]">
               <span className="text-accent">&ldquo;</span>
-              {CLOSING_TAGLINE}
+              {t("closingTagline")}
               <span className="text-accent">&rdquo;</span>
             </p>
           </div>
@@ -310,16 +217,14 @@ export default function AboutPage() {
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">
             <Text size="label" className="mb-3 tracking-[1.4px] font-black text-accent">
-              HOW YOUR DONATION WORKS
+              {t("donationLabel")}
             </Text>
             <Heading level="h2" className="mb-4">
-              From you to the patient,{" "}
-              <span className="text-accent">in three steps</span>
+              {t("donationHeadingPrefix")}{" "}
+              <span className="text-accent">{t("donationHeadingHighlight")}</span>
             </Heading>
             <Text variant="secondary" size="body-lg">
-              Every rupee follows the same path: a verified case, a public
-              collection, and direct settlement to the hospital that performs
-              the surgery.
+              {t("donationBody")}
             </Text>
           </div>
 
@@ -345,15 +250,14 @@ export default function AboutPage() {
         <Container>
           <div className="mx-auto mb-12 max-w-2xl text-center">
             <Text size="label" className="mb-3 tracking-[1.4px] font-black text-accent">
-              OUR PROMISES
+              {t("promisesLabel")}
             </Text>
             <Heading level="h2" className="mb-4">
-              What we will{" "}
-              <span className="text-accent">never do</span>
+              {t("promisesHeadingPrefix")}{" "}
+              <span className="text-accent">{t("promisesHeadingHighlight")}</span>
             </Heading>
             <Text variant="secondary" size="body-lg">
-              Trust starts with what we refuse. These are non-negotiable rules
-              that govern every campaign listed on Surgery Care Foundation.
+              {t("promisesBody")}
             </Text>
           </div>
 
@@ -378,16 +282,14 @@ export default function AboutPage() {
         <Container>
           <div className="mx-auto mb-12 max-w-2xl text-center">
             <Text size="label" className="mb-3 tracking-[1.4px] font-black text-accent">
-              REGISTRATIONS & COMPLIANCE
+              {t("registrationsLabel")}
             </Text>
             <Heading level="h2" className="mb-4">
-              A registered, compliant{" "}
-              <span className="text-accent">non-profit organisation</span>
+              {t("registrationsHeadingPrefix")}{" "}
+              <span className="text-accent">{t("registrationsHeadingHighlight")}</span>
             </Heading>
             <Text variant="secondary" size="body-lg">
-              Surgery Care Foundation is registered under Indian non-profit law
-              and holds the certifications below. Documents are available on
-              written request.
+              {t("registrationsBody")}
             </Text>
           </div>
 
@@ -416,15 +318,14 @@ export default function AboutPage() {
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">
             <Text size="label" className="mb-3 tracking-[1.4px] font-black text-accent">
-              OUR GOALS
+              {t("goalsLabel")}
             </Text>
             <Heading level="h2">
-              The patient always{" "}
-              <span className="text-accent">comes first</span>
+              {t("goalsHeadingPrefix")}{" "}
+              <span className="text-accent">{t("goalsHeadingHighlight")}</span>
             </Heading>
             <Text variant="secondary" size="body-lg" className="mt-4">
-              We believe patients deserve timely access to healthcare, and our
-              systems are built to reflect that value at every step.
+              {t("goalsBody")}
             </Text>
           </div>
 
@@ -434,11 +335,10 @@ export default function AboutPage() {
                 <HeartHandshakeIcon className="size-6 text-accent" />
               </span>
               <Heading level="h4" as="h3" className="mb-2">
-                Values and Trust
+                {t("goalValuesTitle")}
               </Heading>
               <Text variant="secondary">
-                Honest and open communication with patients and partner hospitals
-                at every stage of treatment.
+                {t("goalValuesDescription")}
               </Text>
             </div>
             <div className="rounded-3xl border border-surface-border bg-white p-8 shadow-card">
@@ -446,11 +346,10 @@ export default function AboutPage() {
                 <ShieldCheckIcon className="size-6 text-accent" />
               </span>
               <Heading level="h4" as="h3" className="mb-2">
-                Integrity
+                {t("goalIntegrityTitle")}
               </Heading>
               <Text variant="secondary">
-                Fairness and self-scrutiny in everything we do. The ideal
-                way to protect patient safety, confidentiality and privacy.
+                {t("goalIntegrityDescription")}
               </Text>
             </div>
           </div>
@@ -461,4 +360,3 @@ export default function AboutPage() {
     </>
   );
 }
-

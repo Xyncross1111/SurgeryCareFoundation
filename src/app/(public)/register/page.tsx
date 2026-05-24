@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Heading } from "@/components/ui/heading";
 import { Text } from "@/components/ui/text";
 import { Input } from "@/components/ui/input";
@@ -19,6 +20,7 @@ import {
 } from "@/components/shared/turnstile-widget";
 
 export default function RegisterPage() {
+  const t = useTranslations("auth.register");
   const { register } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
@@ -39,12 +41,12 @@ export default function RegisterPage() {
     setError("");
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+      setError(t("passwordsMismatch"));
       return;
     }
 
     if (captchaRequired && !captchaToken) {
-      setError("Please complete the verification challenge before creating your account.");
+      setError(t("captchaRequiredError"));
       return;
     }
 
@@ -59,10 +61,10 @@ export default function RegisterPage() {
         ...(captchaToken ? { captchaToken } : {}),
       });
       const greetName = session.firstName?.trim() || session.email;
-      toast(`Welcome, ${greetName}! Your account has been created.`, "success");
+      toast(t("welcomeToast", { name: greetName }), "success");
       router.push(getDefaultAppRoute(session.roles));
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Registration failed. Please try again.");
+      setError(err instanceof ApiError ? err.message : t("errorFallback"));
     } finally {
       setIsSubmitting(false);
     }
@@ -87,10 +89,10 @@ export default function RegisterPage() {
       <div className="flex items-center justify-center bg-surface-page px-4 py-16">
         <div className="w-full max-w-md">
           <Heading level="h2" as="h1" className="mb-3">
-            Create Account
+            {t("createAccount")}
           </Heading>
           <Text variant="secondary" size="body-lg" className="mb-10">
-            Join us and start making an impact today.
+            {t("subtitle")}
           </Text>
 
           {error && (
@@ -102,17 +104,17 @@ export default function RegisterPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid gap-4 sm:grid-cols-2">
               <Input
-                label="First Name"
+                label={t("firstNameLabel")}
                 type="text"
-                placeholder="John"
+                placeholder={t("firstNamePlaceholder")}
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 required
               />
               <Input
-                label="Last Name"
+                label={t("lastNameLabel")}
                 type="text"
-                placeholder="Doe"
+                placeholder={t("lastNamePlaceholder")}
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 required
@@ -120,9 +122,9 @@ export default function RegisterPage() {
             </div>
 
             <Input
-              label="Email Address"
+              label={t("emailLabel")}
               type="email"
-              placeholder="you@example.com"
+              placeholder={t("emailPlaceholder")}
               icon={<MailIcon className="size-5" />}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -130,17 +132,17 @@ export default function RegisterPage() {
             />
 
             <Input
-              label="Phone (Optional)"
+              label={t("phoneLabel")}
               type="tel"
-              placeholder="+91 98765 43210"
+              placeholder={t("phonePlaceholder")}
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
             />
 
             <Input
-              label="Password"
+              label={t("passwordLabel")}
               type="password"
-              placeholder="••••••••"
+              placeholder={t("passwordPlaceholder")}
               icon={<LockIcon className="size-5" />}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -149,9 +151,9 @@ export default function RegisterPage() {
             />
 
             <Input
-              label="Confirm Password"
+              label={t("confirmPasswordLabel")}
               type="password"
-              placeholder="••••••••"
+              placeholder={t("passwordPlaceholder")}
               icon={<LockIcon className="size-5" />}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
@@ -168,18 +170,18 @@ export default function RegisterPage() {
               className="w-full gap-2"
               disabled={isSubmitting || (captchaRequired && !captchaToken)}
             >
-              {isSubmitting ? "Creating Account..." : "Create Account"}
+              {isSubmitting ? t("creatingAccount") : t("createAccountButton")}
               {!isSubmitting && <ArrowRightIcon className="size-5" />}
             </Button>
           </form>
 
           <p className="mt-6 text-center text-body text-slate-medium">
-            Already have an account?{" "}
+            {t("haveAccount")}{" "}
             <Link
               href="/login"
               className="font-bold text-accent transition-colors hover:text-accent-green"
             >
-              Log in
+              {t("logIn")}
             </Link>
           </p>
         </div>
