@@ -416,7 +416,7 @@ export default function CauseDetailClient({ slug }: { slug: string }) {
 
                   {reports.length > 0 && (
                     <div>
-                      <Heading level="h4" as="h2" className="mb-3">Medical Reports</Heading>
+                      <Heading level="h4" as="h2" className="mb-3">Medical Documents</Heading>
                       <div className="space-y-4">
                         {reports.map((doc) => {
                           const isImage = doc.mimeType?.startsWith("image/");
@@ -439,26 +439,25 @@ export default function CauseDetailClient({ slug }: { slug: string }) {
                               </a>
                             );
                           }
-                          // Non-image report (typically PDF) — embed via
-                          // iframe so the page is self-contained instead
-                          // of forcing donors to download to read.
+                          // Non-image report (typically PDF) — embed
+                          // big enough to read on the page without
+                          // chrome around it, matching the inline-image
+                          // treatment above. The small caption beneath
+                          // is the escape hatch for tab-out / download.
                           return (
-                            <div
-                              key={doc.id}
-                              className="overflow-hidden rounded-xl border border-surface-border bg-surface-page"
-                            >
+                            <div key={doc.id}>
                               <iframe
                                 src={doc.downloadUrl}
                                 title={doc.fileName}
-                                className="block h-[600px] w-full"
+                                className="block h-[900px] w-full rounded-xl bg-surface-page"
                               />
                               <a
                                 href={doc.downloadUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="block truncate border-t border-surface-border bg-white px-4 py-2 text-label font-bold uppercase tracking-[1.2px] text-accent transition-colors hover:bg-surface-green"
+                                className="mt-2 inline-block text-label font-bold uppercase tracking-[1.2px] text-accent transition-colors hover:text-accent-green"
                               >
-                                Open in new tab — {doc.fileName}
+                                Open in new tab &rarr;
                               </a>
                             </div>
                           );
