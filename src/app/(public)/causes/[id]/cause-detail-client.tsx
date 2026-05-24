@@ -414,28 +414,25 @@ export default function CauseDetailClient({ slug }: { slug: string }) {
                     <div>
                       <Heading level="h4" as="h2" className="mb-3">Medical Documents</Heading>
                       <div className="space-y-6">
-                        {reports.map((doc) => (
-                          // Single iframe-based shell for both PDFs and
-                          // image reports — browsers render images
-                          // natively in iframes, and this keeps every
-                          // campaign's document section visually
-                          // identical regardless of file type.
-                          <div key={doc.id}>
+                        {reports.map((doc) => {
+                          // Strip Chrome/Edge's built-in PDF viewer
+                          // chrome (toolbar, side panes, scrollbar) by
+                          // appending PDF Open Parameters to the URL.
+                          // For non-PDF docs (JPEG reports) the fragment
+                          // is harmless — browsers ignore it.
+                          const isPdf = doc.mimeType === "application/pdf";
+                          const src = isPdf
+                            ? `${doc.downloadUrl}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`
+                            : doc.downloadUrl;
+                          return (
                             <iframe
-                              src={doc.downloadUrl}
+                              key={doc.id}
+                              src={src}
                               title={doc.fileName}
                               className="block h-[900px] w-full rounded-xl bg-surface-page"
                             />
-                            <a
-                              href={doc.downloadUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="mt-2 inline-block text-label font-bold uppercase tracking-[1.2px] text-accent transition-colors hover:text-accent-green"
-                            >
-                              Open in new tab &rarr;
-                            </a>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </div>
                   )}
