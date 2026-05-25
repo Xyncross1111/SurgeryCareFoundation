@@ -154,6 +154,14 @@ export function DonationPrompt({
             Donate Now
           </Link>
 
+          <Link
+            href={`/causes/${slug}/checkout?recurring=1`}
+            onClick={() => recordDismissed(slug)}
+            className="block w-full text-center text-btn font-bold text-primary underline-offset-4 transition-colors hover:text-accent hover:underline"
+          >
+            or set up a monthly donation
+          </Link>
+
           <div className="grid grid-cols-2 gap-3">
             <button
               type="button"

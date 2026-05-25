@@ -122,11 +122,17 @@ export default function DonationPolicyPage() {
 
           <PolicySection title="8. Recurring and corporate giving">
             <Text variant="secondary">
-              We support one-time and recurring donations through the
-              gateway. Companies wishing to contribute under their Corporate
-              Social Responsibility (CSR) obligation may write to us for a
-              tailored memorandum of understanding setting out the project,
-              utilisation reporting and audit access.
+              Donors can set up monthly recurring contributions in fixed tiers
+              (&#8377;500, &#8377;1,000, &#8377;2,500 or &#8377;5,000) using
+              UPI Autopay, authorised once via Razorpay&rsquo;s secure
+              mandate flow. Recurring donations require a registered account
+              so you can review and cancel them at any time from your
+              dashboard; cancellation takes effect immediately and no further
+              debits are made. A receipt is issued after every successful
+              monthly debit. Companies wishing to contribute under their
+              Corporate Social Responsibility (CSR) obligation may write to
+              us for a tailored memorandum of understanding setting out the
+              project, utilisation reporting and audit access.
             </Text>
           </PolicySection>
 

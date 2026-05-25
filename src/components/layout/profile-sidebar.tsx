@@ -22,6 +22,7 @@ import {
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Overview", icon: GridIcon },
   { href: "/dashboard/donations", label: "Donation History", icon: ClockIcon },
+  { href: "/dashboard/recurring", label: "Monthly Donations", icon: HeartIcon },
   { href: "/dashboard/fundraisers", label: "My Fundraisers", icon: PlusIcon },
   { href: "/dashboard/withdrawals", label: "Withdrawals", icon: HeartIcon },
   { href: "/dashboard/notifications", label: "Notifications", icon: BellIcon },
