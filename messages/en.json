@@ -4,6 +4,7 @@
       "home": "Home",
       "about": "About us",
       "causes": "Causes",
+      "ourWork": "Our work",
       "blog": "Blog",
       "contact": "Contact us"
     },
@@ -423,6 +424,12 @@
     "callHours": "Mon-Fri from 9am to 6pm.",
     "corporateOffice": "Corporate Office",
     "address": "1st Floor, Plot No. 06, Katol Road,\nFalke Layout, Kolbaswami Nagar,\nAkar Nagar, Nagpur,\nMaharashtra 440013, India"
+  },
+  "ourWork": {
+    "heroTitle": "Our work",
+    "heroHighlight": "in action",
+    "heroSubtitle": "Photographs from camps, community gatherings and patient visits across India — the goodwill work behind Surgery Care Foundation.",
+    "galleryAlt": "Surgery Care Foundation outreach photo"
   },
   "auth": {
     "login": {

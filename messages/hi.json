@@ -4,6 +4,7 @@
       "home": "होम",
       "about": "हमारे बारे में",
       "causes": "कारण",
+      "ourWork": "हमारा कार्य",
       "blog": "ब्लॉग",
       "contact": "संपर्क करें"
     },
@@ -423,6 +424,12 @@
     "callHours": "सोम-शुक्र, सुबह 9 से शाम 6 बजे तक।",
     "corporateOffice": "कॉर्पोरेट कार्यालय",
     "address": "1st Floor, Plot No. 06, Katol Road,\nFalke Layout, Kolbaswami Nagar,\nAkar Nagar, Nagpur,\nMaharashtra 440013, India"
+  },
+  "ourWork": {
+    "heroTitle": "हमारा कार्य",
+    "heroHighlight": "ज़मीन पर",
+    "heroSubtitle": "शिविरों, सामुदायिक सभाओं और रोगी भेंटों की तस्वीरें — Surgery Care Foundation का सेवा कार्य।",
+    "galleryAlt": "Surgery Care Foundation सेवा कार्य की तस्वीर"
   },
   "auth": {
     "login": {
