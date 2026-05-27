@@ -46,17 +46,71 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50">
-      {/* ── Nav Bar ──────────────────────────────────────── */}
+      {/* ── Utility Strip (desktop only) ─────────────────── */}
+      <div
+        className="hidden border-b border-surface-border/50 bg-surface-page/80 backdrop-blur-md lg:block"
+        aria-label="Utility navigation"
+      >
+        <Container className="flex h-9 items-center justify-end gap-5 text-caption">
+          <a
+            href="tel:+918815935091"
+            className="inline-flex items-center gap-1.5 font-bold text-primary hover:text-accent"
+          >
+            <PhoneIcon className="size-3 text-accent" />
+            <span className="uppercase tracking-wide text-slate-light">{t("needHelp")}</span>
+            +91 8815935091
+          </a>
+
+          <span className="h-3.5 w-px bg-surface-border" aria-hidden="true" />
+
+          <LanguageToggle />
+
+          {isAuthenticated && (
+            <>
+              <span className="h-3.5 w-px bg-surface-border" aria-hidden="true" />
+              <NotificationBell />
+            </>
+          )}
+
+          <span className="h-3.5 w-px bg-surface-border" aria-hidden="true" />
+
+          {isLoading ? (
+            <div className="h-6 w-20 animate-pulse rounded-full bg-surface-green" />
+          ) : isAuthenticated ? (
+            <Link
+              href="/dashboard/account"
+              className="inline-flex items-center gap-2 font-bold text-primary hover:text-accent"
+            >
+              <Avatar
+                src={user?.avatarUrl ?? undefined}
+                alt={displayName}
+                initials={initials}
+                size="sm"
+              />
+              {displayName}
+            </Link>
+          ) : (
+            <Link
+              href="/login"
+              className="font-bold text-slate-medium transition-colors hover:text-primary"
+            >
+              {t("login")}
+            </Link>
+          )}
+        </Container>
+      </div>
+
+      {/* ── Main Nav Bar ─────────────────────────────────── */}
       <nav
         className="border-b border-surface-border/50 bg-white/70 shadow-subtle backdrop-blur-md"
         aria-label="Main navigation"
       >
-        <Container className="flex h-16 items-center justify-between lg:h-24">
+        <Container className="flex h-16 items-center justify-between lg:h-20">
           {/* Logo */}
           <Logo />
 
           {/* Desktop Nav Links */}
-          <ul className="hidden items-center gap-10 lg:flex" role="list">
+          <ul className="hidden items-center gap-8 xl:gap-10 lg:flex" role="list">
             {NAV_ITEMS.map(({ href, key }) => (
               <li key={href}>
                 <NavLink href={href} active={pathname === href}>
@@ -66,26 +120,8 @@ export function Header() {
             ))}
           </ul>
 
-          {/* Desktop Right Section */}
-          <div className="hidden items-center gap-6 lg:flex">
-            {/* Phone */}
-            <div className="flex flex-col items-end border-r border-surface-border pr-6">
-              <span className="text-caption uppercase text-slate-light">
-                {t("needHelp")}
-              </span>
-              <a
-                href="tel:+918815935091"
-                className="inline-flex items-center gap-1.5 font-black text-btn text-primary"
-              >
-                <PhoneIcon className="size-3.5 text-accent" />
-                +91 8815935091
-              </a>
-            </div>
-
-            {/* Language toggle */}
-            <LanguageToggle />
-
-            {/* Donate Button */}
+          {/* Desktop Donate */}
+          <div className="hidden lg:block">
             <Link
               href="/causes"
               className={buttonVariants({
@@ -97,32 +133,6 @@ export function Header() {
               <HeartFilledIcon className="mr-2 size-3.5 text-white" />
               {t("donate")}
             </Link>
-
-            {isAuthenticated && <NotificationBell />}
-
-            {isLoading ? (
-              <div className="h-10 w-24 animate-pulse rounded-full bg-surface-green" />
-            ) : isAuthenticated ? (
-              <Link href="/dashboard/account" className="flex items-center gap-2">
-                <Avatar
-                  src={user?.avatarUrl ?? undefined}
-                  alt={displayName}
-                  initials={initials}
-                  size="md"
-                />
-                <div>
-                  <p className="text-caption uppercase text-slate-light">{t("myAccount")}</p>
-                  <p className="text-btn font-black text-primary">{displayName}</p>
-                </div>
-              </Link>
-            ) : (
-              <Link
-                href="/login"
-                className="text-btn font-bold text-slate-medium transition-colors hover:text-primary"
-              >
-                {t("login")}
-              </Link>
-            )}
           </div>
 
           {/* Mobile Menu Toggle */}
