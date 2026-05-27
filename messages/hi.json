@@ -429,7 +429,15 @@
     "heroTitle": "हमारा कार्य",
     "heroHighlight": "ज़मीन पर",
     "heroSubtitle": "शिविरों, सामुदायिक सभाओं और रोगी भेंटों की तस्वीरें — Surgery Care Foundation का सेवा कार्य।",
-    "galleryAlt": "Surgery Care Foundation सेवा कार्य की तस्वीर"
+    "introLabel": "ज़मीन पर",
+    "introHeadingPrefix": "समुदाय में",
+    "introHeadingHighlight": "सेवा कार्य",
+    "introBody": "महाराष्ट्र के ग्रामीण क्षेत्रों में स्वास्थ्य शिविर, रोगी भेंट और जागरूकता अभियान। पूरी तस्वीर देखने के लिए किसी भी फ़ोटो पर टैप करें — स्वाइप करें या तीर बटन का उपयोग करें।",
+    "galleryAlt": "Surgery Care Foundation सेवा कार्य की तस्वीर",
+    "pressLabel": "प्रेस कवरेज",
+    "pressHeading": "लोकमत में प्रकाशित",
+    "pressBody": "कुरखेड़ा में आयोजित Surgery Care Foundation जाँच शिविर का स्थानीय प्रेस कवरेज — 147 रोगियों की निःशुल्क जाँच और उपचार।",
+    "pressAlt": "Surgery Care Foundation जाँच शिविर पर लोकमत समाचार लेख"
   },
   "auth": {
     "login": {

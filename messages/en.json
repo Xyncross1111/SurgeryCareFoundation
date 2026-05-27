@@ -429,7 +429,15 @@
     "heroTitle": "Our work",
     "heroHighlight": "in action",
     "heroSubtitle": "Photographs from camps, community gatherings and patient visits across India — the goodwill work behind Surgery Care Foundation.",
-    "galleryAlt": "Surgery Care Foundation outreach photo"
+    "introLabel": "ON THE GROUND",
+    "introHeadingPrefix": "Goodwill work in",
+    "introHeadingHighlight": "the community",
+    "introBody": "Health camps, patient visits and awareness drives across rural Maharashtra. Tap any photo to view it full screen — swipe or use arrow keys to browse.",
+    "galleryAlt": "Surgery Care Foundation outreach photo",
+    "pressLabel": "PRESS COVERAGE",
+    "pressHeading": "Featured in Lokmat",
+    "pressBody": "Local press coverage of a Surgery Care Foundation screening camp in Kurkheda — 147 patients examined and treated free of cost.",
+    "pressAlt": "Lokmat newspaper article covering Surgery Care Foundation screening camp"
   },
   "auth": {
     "login": {
