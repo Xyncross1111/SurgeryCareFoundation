@@ -16,6 +16,17 @@
 }
 
 @layer base {
+  html,
+  body {
+    /* Stop any rogue child from making the whole page horizontally
+       scrollable on mobile. `clip` is preferred over `hidden` because
+       it doesn't create a new scroll container (keeps position: sticky
+       inside the page working). `hidden` is the fallback for browsers
+       without clip support (older iOS Safari). */
+    overflow-x: hidden;
+    overflow-x: clip;
+  }
+
   body {
     @apply font-sans text-body text-slate antialiased bg-white;
   }
