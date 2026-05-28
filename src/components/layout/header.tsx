@@ -155,7 +155,7 @@ export function Header() {
         <div
           className={cn(
             "overflow-hidden border-t border-surface-border bg-white transition-all duration-300 lg:hidden",
-            mobileOpen ? "max-h-[400px] opacity-100" : "max-h-0 opacity-0"
+            mobileOpen ? "max-h-[640px] opacity-100" : "max-h-0 opacity-0"
           )}
         >
           <Container className="py-4">
